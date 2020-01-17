@@ -1,0 +1,32 @@
+    main call
+    halt
+
+main:
+    0
+main_loop:
+    duplicate 2*load_parameter subtract
+    main_end jump_false
+    duplicate
+    main_first jump_false
+    " " stdout write
+main_first:
+    duplicate 3*load_parameter add
+    load stdout print call
+    2*discard
+    increment
+    main_loop jump
+main_end:
+    "\n" stdout write
+    return
+
+print:
+    2*load_parameter
+print_loop:
+    duplicate load
+    duplicate
+    print_end jump_false
+    load_parameter write
+    increment
+    print_loop jump
+print_end:
+    return
