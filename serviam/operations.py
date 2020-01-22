@@ -3,9 +3,9 @@ from fractions import Fraction as Q
 
 from serviam.register import Register
 
-IR = Register.INSTRUCTION.value
-SR = Register.STACK.value
-FR = Register.FRAME.value
+IR = Register.INSTRUCTION.value - 1
+SR = Register.STACK.value - 1
+FR = Register.FRAME.value - 1
 
 
 class BlockedError(Exception):
@@ -104,7 +104,7 @@ def load(process):
     process.registers[IR] += 1
 
 
-def load_numerator(process):
+def load_integer(process):
     process.push(Q(process.memory[process.registers[IR]].numerator))
     process.registers[IR] += 1
 

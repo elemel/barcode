@@ -1,151 +1,98 @@
 from fractions import Fraction as Q
 import unittest
 
-from serviam.assembly import assemble, assemble_text
-from serviam.opcode import Opcode
+from serviam.assembler import assemble
 from serviam.process import Process
-from serviam.register import Register
-from serviam.standard_stream import StandardStream
-
-ADD = Opcode.ADD.value
-CALL = Opcode.CALL.value
-COPY = Opcode.COPY.value
-DISCARD = Opcode.DISCARD.value
-HALT = Opcode.HALT.value
-INCREMENT = Opcode.INCREMENT.value
-JUMP = Opcode.JUMP.value
-JUMP_FALSE = Opcode.JUMP_FALSE.value
-LOAD = Opcode.LOAD.value
-LOAD_PARAMETER = Opcode.LOAD_PARAMETER.value
-RETURN = Opcode.RETURN.value
-STORE_PARAMETER = Opcode.STORE_PARAMETER.value
-SUBTRACT = Opcode.SUBTRACT.value
-WRITE = Opcode.WRITE.value
-
-STDIN = StandardStream.INPUT.value
-STDOUT = StandardStream.OUTPUT.value
 
 
 class ProcessTest(unittest.TestCase):
     def test_halt(self):
-        process = Process([
-            Q(13), HALT,
-        ])
+        process = Process(assemble('''
+
+            13 /halt
+
+        '''))
 
         process.run()
         self.assertEqual(process.peek(), Q(13))
 
     def test_call(self):
-        process = Process(assemble([
-            0,
-            'function', CALL,
-            HALT,
+        process = Process(assemble('''
 
-            ['function'],
-            13,
-            STORE_PARAMETER,
-            RETURN,
-        ]))
+                0
+                function /call
+                /halt
+
+            function:
+                13 /store_parameter
+                /return
+
+        '''))
 
         process.run()
         self.assertEqual(process.peek(), Q(13))
 
     def test_hello_world(self):
-        process = Process(assemble([
-            'message',
+        process = Process(assemble('''
 
-            ['loop'],
-            COPY, LOAD,
-            COPY,
-            'exit', JUMP_FALSE,
-            STDOUT, WRITE,
-            INCREMENT,
-            'loop', JUMP,
+                message
 
-            ['exit'],
-            0, HALT,
+            loop:
+                /copy /load
+                /copy
+                exit /jump_false
+                standard_output /write
+                /increment
+                loop /jump
 
-            ['message'],
-            {'Hello, World!\n'}, 0,
-        ]))
+            exit:
+                0 /halt
+
+            message:
+                "Hello, World!\n" 0
+
+        '''))
 
         process.run()
         self.assertEqual(process.readLine(), 'Hello, World!\n')
 
     def test_echo(self):
-#         assemble_text("""    main call
-#     halt
+        process = Process(assemble('''
 
-# main:
-#     0
-# main_loop:
-#     duplicate 2*load_parameter subtract
-#     main_end jump_false
-#     duplicate
-#     main_first jump_false
-#     " " stdout write
-# main_first:
-#     duplicate 3*load_parameter add
-#     load stdout print call
-#     2*discard
-#     increment
-#     main_loop jump
-# main_end:
-#     "\n" stdout write
-#     return
+                main /call
+                /halt
 
-# print:
-#     2*load_parameter
-# print_loop:
-#     duplicate load
-#     duplicate
-#     print_end jump_false
-#     load_parameter write
-#     increment
-#     print_loop jump
-# print_end:
-#     return
-# """)
+            main:
+                0
+            main_loop:
+                /copy 2/load_parameter /subtract
+                main_end /jump_false
+                /copy
+                main_first /jump_false
+                " " standard_output /write
+            main_first:
+                /copy 3/load_parameter /add
+                /load standard_output print /call
+                2/discard
+                /increment
+                main_loop /jump
+            main_end:
+                "\n" standard_output /write
+                /return
 
-        process = Process(assemble([
-            'main', CALL,
-            HALT,
+            print:
+                2/load_parameter
+            print_loop:
+                /copy /load
+                /copy
+                print_end /jump_false
+                /load_parameter /write
+                /increment
+                print_loop /jump
+            print_end:
+                /return
 
-            ['main'],
-            0,
-
-            ['main.loop'],
-            COPY, LOAD_PARAMETER * 2, SUBTRACT,
-            'main.return', JUMP_FALSE,
-            COPY,
-            'main.first', JUMP_FALSE,
-            {' '}, STDOUT, WRITE,
-
-            ['main.first'],
-            COPY, LOAD_PARAMETER * 3, ADD,
-            LOAD, STDOUT, 'print', CALL,
-            DISCARD * 2,
-            INCREMENT,
-            'main.loop', JUMP,
-
-            ['main.return'],
-            {'\n'}, STDOUT, WRITE,
-            RETURN,
-
-            ['print'],
-            LOAD_PARAMETER * 2,
-
-            ['print.loop'],
-            COPY, LOAD,
-            COPY,
-            'print.return', JUMP_FALSE,
-            LOAD_PARAMETER, WRITE,
-            INCREMENT,
-            'print.loop', JUMP,
-
-            ['print.return'],
-            RETURN,
-        ]), args=['hello', 'world'])
+        '''), args=['hello', 'world'])
 
         process.run()
         self.assertEqual(process.readLine(), 'hello world\n')

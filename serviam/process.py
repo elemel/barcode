@@ -7,20 +7,22 @@ from serviam.register import Register
 from serviam.sparse_dict import SparseDict
 from serviam.standard_stream import StandardStream
 
-IR = Register.INSTRUCTION.value
-SR = Register.STACK.value
-FR = Register.FRAME.value
-GR = Register.GARBAGE.value
-HR = Register.HEAP.value
+IR = Register.INSTRUCTION.value - 1
+SR = Register.STACK.value - 1
+FR = Register.FRAME.value - 1
+GR = Register.GARBAGE.value - 1
+HR = Register.HEAP.value - 1
 
 HALT = Opcode.HALT.value
 
-STDIN = StandardStream.INPUT.value
-STDOUT = StandardStream.OUTPUT.value
+STDIN = Q(StandardStream.INPUT.value)
+STDOUT = Q(StandardStream.OUTPUT.value)
 
-DENOMINATOR_TO_OPERATION = {
-    opcode.value.denominator:
-    getattr(operations, 'return_' if opcode.name == 'RETURN' else opcode.name.lower())
+OPCODE_TO_OPERATION = {
+    opcode.value:
+    getattr(
+        operations,
+        'return_' if opcode.name == 'RETURN' else opcode.name.lower())
     for opcode in Opcode
 }
 
@@ -31,10 +33,10 @@ class Process:
         self.memory = SparseDict(default=Q(0))
         self.streams = defaultdict(deque)
 
-        for i, q in enumerate(machine_code, start=1):
+        for i, q in enumerate(machine_code):
             self.memory[Q(i)] = q
 
-        self.registers[IR] = Q(1)
+        self.registers[IR] = Q(0)
         self.registers[GR] = Q(1, 2)
         self.registers[HR] = Q(1, 3)
 
@@ -67,6 +69,7 @@ class Process:
     def peek(self):
         return self.memory[self.registers[SR] - 1]
 
+    # TODO: Allocate 1/3, 2/3, 1/4, 3/4, 1/5, 2/5, 3/5, 4/5, 1/6, 5/6, 1/7, ...
     def allocate(self):
         if self.registers[GR] > 1:
             self.registers[GR] -= 1
@@ -83,10 +86,10 @@ class Process:
     def step(self):
         opcode = self.memory[self.registers[IR]]
 
-        if opcode == HALT:
+        if opcode.denominator == HALT:
             return False
 
-        operation = DENOMINATOR_TO_OPERATION[opcode.denominator]
+        operation = OPCODE_TO_OPERATION[opcode.denominator]
         operation(self)
         return True
 

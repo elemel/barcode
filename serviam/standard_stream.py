@@ -3,6 +3,6 @@ from fractions import Fraction as Q
 
 
 class StandardStream(Enum):
-    INPUT = Q(0)
-    OUTPUT = Q(1)
-    ERROR = Q(2)
+    INPUT = 1
+    OUTPUT = 2
+    ERROR = 3
