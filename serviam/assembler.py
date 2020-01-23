@@ -7,8 +7,8 @@ grammar = Grammar(r"""
     program = whitespace? (statement (whitespace statement)*)? whitespace?
     statement = label / constant / value / string
 
-    label = identifier ':'
-    constant = identifier '=' value
+    label = identifier whitespace? ':'
+    constant = identifier whitespace? '=' whitespace? value
 
     value = ((sign operand)? '/' operand) / (sign operand)
     sign = '-'?
@@ -37,11 +37,11 @@ class Visitor(NodeVisitor):
         return program
 
     def visit_label(self, node, visited_children):
-        identifier, _ = visited_children
+        identifier, _, _ = visited_children
         return 'label', identifier
 
     def visit_constant(self, node, visited_children):
-        identifier, _, value = visited_children
+        identifier, _, _, _, value = visited_children
         _, sign, numerator, denominator = value
         return 'constant', identifier, sign, numerator, denominator
 
@@ -85,48 +85,48 @@ class Visitor(NodeVisitor):
 def assemble(assembly_code):
     assembly_code += """
 
-        instruction_register=1
-        garbage_register=2
-        heap_register=3
-        stack_register=4
-        frame_register=5
+        instruction_register = 1
+        garbage_register = 2
+        heap_register = 3
+        stack_register = 4
+        frame_register = 5
 
-        load_integer=1
-        swap=3
-        decrement=9
-        load=18
-        allocate=33
-        invert=49
-        divide=76
-        add=81
-        multiply=107
-        store=125
-        increment=143
-        negate=147
-        call=164
-        denominator=171
-        subtract=183
-        return=193
-        jump=199
-        deallocate=211
-        read=214
-        numerator=222
-        discard=223
-        load_register=227
-        store_register=229
-        store_parameter=233
-        copy=236
-        load_variable=239
-        load_parameter=241
-        write=245
-        load_rational=247
-        store_variable=251
-        jump_false=252
-        halt=255
+        load_integer = 1
+        swap = 3
+        decrement = 9
+        load = 18
+        allocate = 33
+        invert = 49
+        divide = 76
+        add = 81
+        multiply = 107
+        store = 125
+        increment = 143
+        negate = 147
+        call = 164
+        denominator = 171
+        subtract = 183
+        return = 193
+        jump = 199
+        deallocate = 211
+        read = 214
+        numerator = 222
+        discard = 223
+        load_register = 227
+        store_register = 229
+        store_parameter = 233
+        copy = 236
+        load_variable = 239
+        load_parameter = 241
+        write = 245
+        load_rational = 247
+        store_variable = 251
+        jump_false = 252
+        halt = 255
 
-        standard_input=1
-        standard_output=2
-        standard_error=3
+        standard_input = 1
+        standard_output = 2
+        standard_error = 3
 
     """
 
