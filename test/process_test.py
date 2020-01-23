@@ -38,10 +38,10 @@ class ProcessTest(unittest.TestCase):
                 message
 
             loop:
-                /copy /load
-                /copy
-                exit /jump_false
-                standard_output /write
+                /duplicate /load_memory
+                /duplicate
+                exit /jump_equal
+                stdout /store_stream
                 /increment
                 loop /jump
 
@@ -65,28 +65,28 @@ class ProcessTest(unittest.TestCase):
             main:
                 0
             main_loop:
-                /copy 2/load_parameter /subtract
-                main_end /jump_false
-                /copy
-                main_first /jump_false
-                " " standard_output /write
+                /duplicate 2/load_parameter /subtract
+                main_end /jump_equal
+                /duplicate
+                main_first /jump_equal
+                " " stdout /store_stream
             main_first:
-                /copy 3/load_parameter /add
-                /load standard_output print /call
+                /duplicate 3/load_parameter /add
+                /load_memory stdout print /call
                 2/discard
                 /increment
                 main_loop /jump
             main_end:
-                "\n" standard_output /write
+                "\n" stdout /store_stream
                 /return
 
             print:
                 2/load_parameter
             print_loop:
-                /copy /load
-                /copy
-                print_end /jump_false
-                /load_parameter /write
+                /duplicate /load_memory
+                /duplicate
+                print_end /jump_equal
+                /load_parameter /store_stream
                 /increment
                 print_loop /jump
             print_end:

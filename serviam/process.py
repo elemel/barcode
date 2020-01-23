@@ -5,7 +5,7 @@ from serviam import operations
 from serviam.opcode import Opcode
 from serviam.register import Register
 from serviam.sparse_dict import SparseDict
-from serviam.standard_stream import StandardStream
+from serviam.stdio import StandardStream
 
 IR = Register.INSTRUCTION.value - 1
 SR = Register.STACK.value - 1
@@ -40,13 +40,13 @@ class Process:
         self.registers[GR] = Q(1, 2)
         self.registers[HR] = Q(1, 3)
 
-        self.registers[SR] = self.allocate()
+        self.registers[SR] = self.new()
         self.registers[FR] = self.registers[SR]
 
-        args_address = self.allocate()
+        args_address = self.new()
 
         for i, arg in enumerate(args):
-            arg_address = self.allocate()
+            arg_address = self.new()
 
             for j, char in enumerate(arg):
                 self.memory[arg_address + j] = Q(ord(char))
@@ -70,7 +70,7 @@ class Process:
         return self.memory[self.registers[SR] - 1]
 
     # TODO: Allocate 1/3, 2/3, 1/4, 3/4, 1/5, 2/5, 3/5, 4/5, 1/6, 5/6, 1/7, ...
-    def allocate(self):
+    def new(self):
         if self.registers[GR] > 1:
             self.registers[GR] -= 1
             return self.memory[self.registers[GR]]
@@ -79,7 +79,7 @@ class Process:
         self.registers[HR] = Q(1, self.registers[HR].denominator + 1)
         return result
 
-    def deallocate(self, array):
+    def delete(self, array):
         self.memory[self.memory[PR]] = array
         self.memory[PR] += 1
 

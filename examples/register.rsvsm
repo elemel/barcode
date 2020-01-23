@@ -1,5 +1,5 @@
-instruction_register = 1
-garbage_register = 2
-heap_register = 3
-stack_register = 4
-frame_register = 5
+ir = 1
+gr = 2
+hr = 3
+sr = 4
+fr = 5

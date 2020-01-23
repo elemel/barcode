@@ -21,8 +21,8 @@ def add(process):
     process.registers[IR] += 1
 
 
-def allocate(process):
-    process.push(process.allocate())
+def new(process):
+    process.push(process.new())
     process.registers[IR] += 1
 
 
@@ -36,22 +36,13 @@ def call(process):
     process.registers[FR] = process.registers[SR]
 
 
-def copy(process):
-    value = process.pop()
-
-    process.push(value)
-    process.push(value)
-
-    process.registers[IR] += 1
-
-
-def deallocate(process):
-    process.deallocate(process.pop())
-    process.registers[IR] += 1
-
-
 def decrement(process):
     process.push(process.pop() - 1)
+    process.registers[IR] += 1
+
+
+def delete(process):
+    process.delete(process.pop())
     process.registers[IR] += 1
 
 
@@ -68,6 +59,15 @@ def discard(process):
 
 def divide(process):
     process.push(process.pop() / process.pop())
+    process.registers[IR] += 1
+
+
+def duplicate(process):
+    value = process.pop()
+
+    process.push(value)
+    process.push(value)
+
     process.registers[IR] += 1
 
 
@@ -98,14 +98,14 @@ def jump_false(process):
         process.registers[IR] += 1
 
 
-def load(process):
-    address = process.pop()
-    process.push(process.memory[address])
+def load_integer(process):
+    process.push(Q(process.memory[process.registers[IR]].numerator))
     process.registers[IR] += 1
 
 
-def load_integer(process):
-    process.push(Q(process.memory[process.registers[IR]].numerator))
+def load_memory(process):
+    address = process.pop()
+    process.push(process.memory[address])
     process.registers[IR] += 1
 
 
@@ -123,6 +123,17 @@ def load_rational(process):
 def load_register(process):
     index = process.memory[process.registers[IR]].numerator
     process.push(process.memory[index - 1])
+    process.registers[IR] += 1
+
+
+def load_stream(process):
+    file_descriptor = process.pop()
+    stream = process.streams[file_descriptor]
+
+    if not stream:
+        raise BlockedError()
+
+    process.push(stream.popleft())
     process.registers[IR] += 1
 
 
@@ -147,24 +158,13 @@ def numerator(process):
     process.registers[IR] += 1
 
 
-def read(process):
-    file_descriptor = process.pop()
-    stream = process.streams[file_descriptor]
-
-    if not stream:
-        raise BlockedError()
-
-    process.push(stream.popleft())
-    process.registers[IR] += 1
-
-
 def return_(process):
     process.registers[SR] = process.registers[FR]
     process.registers[FR] = process.pop()
     process.registers[IR] = process.pop()
 
 
-def store(process):
+def store_memory(process):
     address = process.pop()
     process.memory[address] = process.pop()
     process.registers[IR] += 1
@@ -179,6 +179,13 @@ def store_parameter(process):
 def store_register(process):
     index = process.memory[process.registers[IR]].numerator
     process.registers[index - 1] = process.pop()
+    process.registers[IR] += 1
+
+
+def store_stream(process):
+    file_descriptor = process.pop()
+    stream = process.streams[file_descriptor]
+    stream.append(process.pop())
     process.registers[IR] += 1
 
 
@@ -200,11 +207,4 @@ def swap(process):
     process.push(a)
     process.push(b)
 
-    process.registers[IR] += 1
-
-
-def write(process):
-    file_descriptor = process.pop()
-    stream = process.streams[file_descriptor]
-    stream.append(process.pop())
     process.registers[IR] += 1
