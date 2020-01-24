@@ -1,7 +1,7 @@
 from enum import Enum
 from fractions import Fraction as Q
 
-from serviam.register import Register
+from barcode.register import Register
 
 IR = Register.INSTRUCTION.value - 1
 SR = Register.STACK.value - 1

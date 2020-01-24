@@ -1,11 +1,11 @@
 from collections import defaultdict, deque
 from fractions import Fraction as Q
 
-from serviam import operations
-from serviam.opcode import Opcode
-from serviam.register import Register
-from serviam.sparse_dict import SparseDict
-from serviam.stdio import StandardStream
+from barcode import operations
+from barcode.opcode import Opcode
+from barcode.register import Register
+from barcode.sparse_dict import SparseDict
+from barcode.stdio import StandardStream
 
 IR = Register.INSTRUCTION.value - 1
 SR = Register.STACK.value - 1

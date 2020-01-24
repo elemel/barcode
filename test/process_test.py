@@ -1,8 +1,8 @@
 from fractions import Fraction as Q
 import unittest
 
-from serviam.assembler import assemble
-from serviam.process import Process
+from barcode.assembler import assemble
+from barcode.process import Process
 
 
 class ProcessTest(unittest.TestCase):
