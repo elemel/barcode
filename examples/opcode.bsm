@@ -1,4 +1,4 @@
-ldz = 1
+ldi = 1
 swp = 3
 dec = 9
 ldm = 18
@@ -26,7 +26,6 @@ dup = 236
 ldl = 239
 ldp = 241
 sts = 245
-ldq = 247
 stl = 251
 jeq = 252
 hcf = 255

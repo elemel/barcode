@@ -145,7 +145,7 @@ def jump_equal(process):
         process.registers[IR] += 1
 
 
-@operation(1, 'ldz')
+@operation(1, 'ldi')
 def load_integer(process):
     process.push(Q(process.memory[process.registers[IR]].numerator))
     process.registers[IR] += 1
@@ -170,12 +170,6 @@ def load_parameter(process):
     index = process.memory[process.registers[IR]].numerator
     process.push(process.memory[process.registers[FR] - (index + 2)])
     process.registers[IR] += 1
-
-
-@operation(247, 'ldq')
-def load_rational(process):
-    process.push(process.memory[process.registers[IR] + 1])
-    process.registers[IR] += 2
 
 
 @operation(227, 'ldr')

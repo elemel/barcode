@@ -91,7 +91,7 @@ def assemble(assembly_code):
         sr = 4
         fr = 5
 
-        ldz = 1
+        ldi = 1
         swp = 3
         dec = 9
         ldm = 18
@@ -119,7 +119,6 @@ def assemble(assembly_code):
         ldl = 239
         ldp = 241
         put = 245
-        ldq = 247
         stl = 251
         jeq = 252
         hcf = 255
