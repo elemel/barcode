@@ -9,7 +9,7 @@ class ProcessTest(unittest.TestCase):
     def test_halt(self):
         process = Process(assemble('''
 
-            13 /halt
+            13 /hcf
 
         '''))
 
@@ -20,12 +20,12 @@ class ProcessTest(unittest.TestCase):
         process = Process(assemble('''
 
                 0
-                function /call
-                /halt
+                function /cal
+                /hcf
 
             function:
-                13 /store_parameter
-                /return
+                13 /stp
+                /ret
 
         '''))
 
@@ -38,15 +38,15 @@ class ProcessTest(unittest.TestCase):
                 message
 
             loop:
-                /duplicate /load_memory
-                /duplicate
-                exit /jump_equal
-                stdout /store_stream
-                /increment
-                loop /jump
+                /dup /ldm
+                /dup
+                exit /jeq
+                stdout /put
+                /inc
+                loop /jmp
 
             exit:
-                0 /halt
+                0 /hcf
 
             message:
                 "Hello, World!\n" 0
@@ -59,38 +59,38 @@ class ProcessTest(unittest.TestCase):
     def test_echo(self):
         process = Process(assemble('''
 
-                main /call
-                /halt
+                main /cal
+                /hcf
 
             main:
                 0
             main_loop:
-                /duplicate 2/load_parameter /subtract
-                main_end /jump_equal
-                /duplicate
-                main_first /jump_equal
-                " " stdout /store_stream
+                /dup 2/ldp /sub
+                main_end /jeq
+                /dup
+                main_first /jeq
+                " " stdout /put
             main_first:
-                /duplicate 3/load_parameter /add
-                /load_memory stdout print /call
-                2/discard
-                /increment
-                main_loop /jump
+                /dup 3/ldp /add
+                /ldm stdout print /cal
+                2/dis
+                /inc
+                main_loop /jmp
             main_end:
-                "\n" stdout /store_stream
-                /return
+                "\n" stdout /put
+                /ret
 
             print:
-                2/load_parameter
+                2/ldp
             print_loop:
-                /duplicate /load_memory
-                /duplicate
-                print_end /jump_equal
-                /load_parameter /store_stream
-                /increment
-                print_loop /jump
+                /dup /ldm
+                /dup
+                print_end /jeq
+                /ldp /put
+                /inc
+                print_loop /jmp
             print_end:
-                /return
+                /ret
 
         '''), args=['hello', 'world'])
 

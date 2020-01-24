@@ -12,7 +12,7 @@ FR = Register.FRAME.value - 1
 GR = Register.GARBAGE.value - 1
 HR = Register.HEAP.value - 1
 
-HALT = MNEMONIC_TO_OPCODE['halt']
+HCF = MNEMONIC_TO_OPCODE['hcf']
 
 STDIN = Q(StandardStream.INPUT.value)
 STDOUT = Q(StandardStream.OUTPUT.value)
@@ -77,7 +77,7 @@ class Process:
     def step(self):
         opcode = self.memory[self.registers[IR]]
 
-        if opcode.denominator == HALT:
+        if opcode.denominator == HCF:
             return False
 
         operation = OPCODE_TO_OPERATION[opcode.denominator]

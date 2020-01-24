@@ -1,32 +1,32 @@
-    main /call
-    /halt
+    main /cal
+    /hcf
 
 main:
     0
 main_loop:
-    /duplicate 2/load_parameter /subtract
-    main_end /jump_equal
-    /duplicate
-    main_first /jump_equal
-    " " stdout /store_stream
+    /dup 2/ldp /sub
+    main_end /jeq
+    /dup
+    main_first /jeq
+    " " stdout /put
 main_first:
-    /duplicate 3/load_parameter /add
-    /load_memory stdout print /call
-    2/discard
-    /increment
-    main_loop /jump
+    /dup 3/ldp /add
+    /ldm stdout print /cal
+    2/dis
+    /inc
+    main_loop /jmp
 main_end:
-    "\n" stdout /store_stream
-    /return
+    "\n" stdout /put
+    /ret
 
 print:
-    2/load_parameter
+    2/ldp
 print_loop:
-    /duplicate /load_memory
-    /duplicate
-    print_end /jump_equal
-    /load_parameter /store_stream
-    /increment
-    print_loop /jump
+    /dup /ldm
+    /dup
+    print_end /jeq
+    /ldp /put
+    /inc
+    print_loop /jmp
 print_end:
-    /return
+    /ret
