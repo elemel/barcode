@@ -1,8 +1,7 @@
 from collections import defaultdict, deque
 from fractions import Fraction as Q
 
-from barcode import operations
-from barcode.opcode import Opcode
+from barcode.operations import MNEMONIC_TO_OPCODE, OPCODE_TO_OPERATION
 from barcode.register import Register
 from barcode.sparse_dict import SparseDict
 from barcode.stdio import StandardStream
@@ -13,18 +12,10 @@ FR = Register.FRAME.value - 1
 GR = Register.GARBAGE.value - 1
 HR = Register.HEAP.value - 1
 
-HALT = Opcode.HALT.value
+HALT = MNEMONIC_TO_OPCODE['halt']
 
 STDIN = Q(StandardStream.INPUT.value)
 STDOUT = Q(StandardStream.OUTPUT.value)
-
-OPCODE_TO_OPERATION = {
-    opcode.value:
-    getattr(
-        operations,
-        'return_' if opcode.name == 'RETURN' else opcode.name.lower())
-    for opcode in Opcode
-}
 
 
 class Process:

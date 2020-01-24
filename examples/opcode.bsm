@@ -28,5 +28,5 @@ load_parameter = 241
 write = 245
 load_rational = 247
 store_variable = 251
-jump_false = 252
+jump_equal = 252
 halt = 255
