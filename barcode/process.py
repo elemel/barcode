@@ -82,6 +82,7 @@ class Process:
 
         operation = OPCODE_TO_OPERATION[opcode.denominator]
         operation(self)
+        self.registers[IR] += 1
         return True
 
     def run(self):
