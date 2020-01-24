@@ -4,7 +4,7 @@ from fractions import Fraction as Q
 from barcode.operations import MNEMONIC_TO_OPCODE, OPCODE_TO_OPERATION
 from barcode.register import Register
 from barcode.sparse_dict import SparseDict
-from barcode.stdio import StandardStream
+from barcode.stdio import StandardQueue
 
 IR = Register.INSTRUCTION.value - 1
 SR = Register.STACK.value - 1
@@ -14,15 +14,15 @@ HR = Register.HEAP.value - 1
 
 HCF = MNEMONIC_TO_OPCODE['hcf']
 
-STDIN = Q(StandardStream.INPUT.value)
-STDOUT = Q(StandardStream.OUTPUT.value)
+STDIN = Q(StandardQueue.INPUT.value)
+STDOUT = Q(StandardQueue.OUTPUT.value)
 
 
 class Process:
     def __init__(self, machine_code=[], args=[]):
         self.registers = len(Register) * [Q(0)]
         self.memory = SparseDict(default=Q(0))
-        self.streams = defaultdict(deque)
+        self.queues = defaultdict(deque)
 
         for i, q in enumerate(machine_code):
             self.memory[Q(i)] = q
@@ -89,12 +89,12 @@ class Process:
         while self.step():
             pass
 
-    def readLine(self, file_descriptor=STDOUT):
+    def readLine(self, handle=STDOUT):
         chars = []
-        stream = self.streams[file_descriptor]
+        queue = self.queues[handle]
 
-        while stream:
-            char = chr(int(stream.popleft()))
+        while queue:
+            char = chr(int(queue.popleft()))
             chars.append(char)
 
             if char == '\n':

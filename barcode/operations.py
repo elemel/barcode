@@ -92,17 +92,6 @@ def duplicate(process):
     process.push(value)
 
 
-@operation(214)
-def get(process):
-    file_descriptor = process.pop()
-    stream = process.streams[file_descriptor]
-
-    if not stream:
-        raise BlockedError()
-
-    process.push(stream.popleft())
-
-
 @operation(255, 'hcf')
 def halt(process):
     raise TerminatedError()
@@ -154,6 +143,17 @@ def load_parameter(process):
     process.push(process.memory[process.registers[FR] - (index + 2)])
 
 
+@operation(214, 'ldq')
+def load_queue(process):
+    handle = process.pop()
+    queue = process.queues[handle]
+
+    if not queue:
+        raise BlockedError()
+
+    process.push(queue.popleft())
+
+
 @operation(227, 'ldr')
 def load_register(process):
     index = process.memory[process.registers[IR]].numerator
@@ -173,13 +173,6 @@ def negate(process):
 @operation(222, 'num')
 def numerator(process):
     process.push(Q(process.pop().numerator))
-
-
-@operation(245)
-def put(process):
-    file_descriptor = process.pop()
-    stream = process.streams[file_descriptor]
-    stream.append(process.pop())
 
 
 @operation(193, 'ret')
@@ -205,6 +198,13 @@ def store_memory(process):
 def store_parameter(process):
     index = process.memory[process.registers[IR]].numerator
     process.memory[process.registers[FR] - (index + 2)] = process.pop()
+
+
+@operation(245, 'stq')
+def store_queue(process):
+    handle = process.pop()
+    queue = process.queues[handle]
+    queue.append(process.pop())
 
 
 @operation(229, 'str')
