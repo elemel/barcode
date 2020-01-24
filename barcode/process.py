@@ -1,5 +1,7 @@
 from collections import defaultdict, deque
 from fractions import Fraction as Q
+from heapq import heappop, heappush
+from sys import maxsize
 
 from barcode.operations import MNEMONIC_TO_OPCODE, OPCODE_TO_OPERATION
 from barcode.register import Register
@@ -9,8 +11,6 @@ from barcode.stdio import StandardQueue
 IR = Register.INSTRUCTION.value - 1
 SR = Register.STACK.value - 1
 FR = Register.FRAME.value - 1
-GR = Register.GARBAGE.value - 1
-HR = Register.HEAP.value - 1
 
 HCF = MNEMONIC_TO_OPCODE['hcf']
 
@@ -23,14 +23,13 @@ class Process:
         self.registers = len(Register) * [Q(0)]
         self.memory = SparseDict(default=Q(0))
         self.queues = defaultdict(deque)
+        self.denominators = iter(range(2, maxsize))
+        self.heap = []
 
         for i, q in enumerate(machine_code):
             self.memory[Q(i)] = q
 
         self.registers[IR] = Q(0)
-        self.registers[GR] = Q(1, 2)
-        self.registers[HR] = Q(1, 3)
-
         self.registers[SR] = self.new()
         self.registers[FR] = self.registers[SR]
 
@@ -62,17 +61,13 @@ class Process:
 
     # TODO: Allocate 1/3, 2/3, 1/4, 3/4, 1/5, 2/5, 3/5, 4/5, 1/6, 5/6, 1/7, ...
     def new(self):
-        if self.registers[GR] > 1:
-            self.registers[GR] -= 1
-            return self.memory[self.registers[GR]]
+        if self.heap:
+            return heappop(self.heap)
 
-        result = self.registers[HR]
-        self.registers[HR] = Q(1, self.registers[HR].denominator + 1)
-        return result
+        return Q(1, next(self.denominators))
 
     def delete(self, array):
-        self.memory[self.memory[PR]] = array
-        self.memory[PR] += 1
+        heappush(self.heap, array)
 
     def step(self):
         opcode = self.memory[self.registers[IR]]
