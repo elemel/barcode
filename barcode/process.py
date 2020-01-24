@@ -18,12 +18,29 @@ STDIN = Q(StandardQueue.INPUT.value)
 STDOUT = Q(StandardQueue.OUTPUT.value)
 
 
+def generate_rationals(q=Q(0)):
+    assert 0 <= q < 1
+
+    yield q
+    dq = Q(1, q.denominator)
+
+    while True:
+        q += dq
+
+        if q.numerator == q.denominator:
+            dq = Q(1, dq.denominator + 1)
+            q = dq
+            yield q
+        elif q.denominator == dq.denominator:
+            yield q
+
+
 class Process:
     def __init__(self, machine_code=[], args=[]):
         self.registers = len(Register) * [Q(0)]
         self.memory = SparseDict(default=Q(0))
         self.queues = defaultdict(deque)
-        self.denominators = iter(range(2, maxsize))
+        self.rationals = generate_rationals(Q(1, 2))
         self.heap = []
 
         for i, q in enumerate(machine_code):
@@ -64,7 +81,7 @@ class Process:
         if self.heap:
             return heappop(self.heap)
 
-        return Q(1, next(self.denominators))
+        return next(self.rationals)
 
     def delete(self, array):
         heappush(self.heap, array)
