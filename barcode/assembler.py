@@ -86,10 +86,8 @@ def assemble(assembly_code):
     assembly_code += """
 
         ir = 1
-        gr = 2
-        hr = 3
-        sr = 4
-        fr = 5
+        sr = 2
+        fr = 3
 
         ldi = 1
         swp = 3
