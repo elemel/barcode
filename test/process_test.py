@@ -41,7 +41,7 @@ class ProcessTest(unittest.TestCase):
                 /dup /ldm
                 /dup
                 exit /jeq
-                stdout /stq
+                stdout /sts
                 /inc
                 loop /jmp
 
@@ -69,7 +69,7 @@ class ProcessTest(unittest.TestCase):
                 main_end /jeq
                 /dup
                 main_first /jeq
-                " " stdout /stq
+                " " stdout /sts
             main_first:
                 /dup 3/ldp /add
                 /ldm stdout print /cal
@@ -77,7 +77,7 @@ class ProcessTest(unittest.TestCase):
                 /inc
                 main_loop /jmp
             main_end:
-                "\n" stdout /stq
+                "\n" stdout /sts
                 /ret
 
             print:
@@ -86,7 +86,7 @@ class ProcessTest(unittest.TestCase):
                 /dup /ldm
                 /dup
                 print_end /jeq
-                /ldp /stq
+                /ldp /sts
                 /inc
                 print_loop /jmp
             print_end:

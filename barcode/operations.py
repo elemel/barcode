@@ -143,21 +143,21 @@ def load_parameter(process):
     process.push(process.memory[process.registers[FR] - (index + 2)])
 
 
-@operation(214, 'ldq')
-def load_queue(process):
-    handle = process.pop()
-    queue = process.queues[handle]
-
-    if not queue:
-        raise BlockedError()
-
-    process.push(queue.popleft())
-
-
 @operation(227, 'ldr')
 def load_register(process):
     index = process.memory[process.registers[IR]].numerator
     process.push(process.memory[index - 1])
+
+
+@operation(214, 'lds')
+def load_stream(process):
+    handle = process.pop()
+    stream = process.streams[handle]
+
+    if not stream:
+        raise BlockedError()
+
+    process.push(stream.popleft())
 
 
 @operation(107, 'mul')
@@ -200,17 +200,17 @@ def store_parameter(process):
     process.memory[process.registers[FR] - (index + 2)] = process.pop()
 
 
-@operation(245, 'stq')
-def store_queue(process):
-    handle = process.pop()
-    queue = process.queues[handle]
-    queue.append(process.pop())
-
-
 @operation(229, 'str')
 def store_register(process):
     index = process.memory[process.registers[IR]].numerator
     process.registers[index - 1] = process.pop()
+
+
+@operation(245, 'sts')
+def store_stream(process):
+    handle = process.pop()
+    stream = process.streams[handle]
+    stream.append(process.pop())
 
 
 @operation(183, 'sub')

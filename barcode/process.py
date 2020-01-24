@@ -6,7 +6,7 @@ from sys import maxsize
 from barcode.operations import MNEMONIC_TO_OPCODE, OPCODE_TO_OPERATION
 from barcode.register import Register
 from barcode.sparse_dict import SparseDict
-from barcode.stdio import StandardQueue
+from barcode.stdio import StandardStream
 
 IR = Register.INSTRUCTION.value - 1
 SR = Register.STACK.value - 1
@@ -14,8 +14,8 @@ FR = Register.FRAME.value - 1
 
 HCF = MNEMONIC_TO_OPCODE['hcf']
 
-STDIN = Q(StandardQueue.INPUT.value)
-STDOUT = Q(StandardQueue.OUTPUT.value)
+STDIN = Q(StandardStream.INPUT.value)
+STDOUT = Q(StandardStream.OUTPUT.value)
 
 
 def generate_rationals(q=Q(0)):
@@ -39,7 +39,7 @@ class Process:
     def __init__(self, machine_code=[], args=[]):
         self.registers = len(Register) * [Q(0)]
         self.memory = SparseDict(default=Q(0))
-        self.queues = defaultdict(deque)
+        self.streams = defaultdict(deque)
         self.rationals = generate_rationals(Q(1, 2))
         self.heap = []
 
@@ -103,10 +103,10 @@ class Process:
 
     def readLine(self, handle=STDOUT):
         chars = []
-        queue = self.queues[handle]
+        stream = self.streams[handle]
 
-        while queue:
-            char = chr(int(queue.popleft()))
+        while stream:
+            char = chr(int(stream.popleft()))
             chars.append(char)
 
             if char == '\n':
