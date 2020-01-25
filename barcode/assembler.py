@@ -16,7 +16,7 @@ grammar = Grammar(r"""
 
     natural = ~'0|[1-9][0-9]*'
     string = ~'"(\\[^\n]|[^"])*"'
-    identifier = ~"[A-Z_a-z][0-9A-Z_a-z]*"
+    identifier = ~"[.A-Z_a-z][.0-9A-Z_a-z]*"
     whitespace = ~'([ \n]|#[^\n]*(\n|$))+'
 """)
 
@@ -134,14 +134,39 @@ def assemble(assembly_code):
     symbols = {}
     errata = {}
 
+    previous_symbol = None
+
+    def get_symbol(symbol):
+        if symbol.startswith('.'):
+            symbol = previous_symbol + symbol
+
+        return symbol
+
+    def set_symbol(symbol):
+        nonlocal previous_symbol
+
+        if symbol.startswith('.'):
+            symbol = previous_symbol + symbol
+        else:
+            previous_symbol = symbol
+
+        return symbol
+
     for statement in intermediate_code:
         if statement[0] == 'label':
-            symbols[statement[1]] = Q(len(machine_code))
+            identifier = set_symbol(statement[1])
+            symbols[identifier] = Q(len(machine_code))
         elif statement[0] == 'constant':
             _, identifier, sign, numerator, denominator = statement
+            identifier = set_symbol(identifier)
 
-            numerator = symbols.get(numerator, numerator)
-            denominator = symbols.get(denominator, denominator)
+            if type(numerator) is str:
+                numerator = get_symbol(numerator)
+                numerator = symbols.get(numerator, numerator)
+
+            if type(denominator) is str:
+                denominator = get_symbol(denominator)
+                denominator = symbols.get(denominator, denominator)
 
             if type(numerator) is not str and type(denominator) is not str:
                 symbols[identifier] = Q(sign * numerator, denominator)
@@ -150,8 +175,13 @@ def assemble(assembly_code):
         elif statement[0] == 'value':
             _, sign, numerator, denominator = statement
 
-            numerator = symbols.get(numerator, numerator)
-            denominator = symbols.get(denominator, denominator)
+            if type(numerator) is str:
+                numerator = get_symbol(numerator)
+                numerator = symbols.get(numerator, numerator)
+
+            if type(denominator) is str:
+                denominator = get_symbol(denominator)
+                denominator = symbols.get(denominator, denominator)
 
             if type(numerator) is not str and type(denominator) is not str:
                 machine_code.append(Q(sign * numerator, denominator))

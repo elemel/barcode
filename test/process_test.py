@@ -64,32 +64,32 @@ class ProcessTest(unittest.TestCase):
 
             main:
                 0
-            main_loop:
+            .loop:
                 /dup 2/ldp /sub
-                main_end /jeq
+                .end /jeq
                 /dup
-                main_first /jeq
+                .first /jeq
                 " " stdout /sts
-            main_first:
+            .first:
                 /dup 3/ldp /add
                 /ldm stdout print /cal
                 2/dis
                 /inc
-                main_loop /jmp
-            main_end:
+                .loop /jmp
+            .end:
                 "\n" stdout /sts
                 /ret
 
             print:
                 2/ldp
-            print_loop:
+            .loop:
                 /dup /ldm
                 /dup
-                print_end /jeq
+                .end /jeq
                 /ldp /sts
                 /inc
-                print_loop /jmp
-            print_end:
+                .loop /jmp
+            .end:
                 /ret
 
         '''), args=['hello', 'world'])
