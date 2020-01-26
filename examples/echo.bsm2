@@ -1,0 +1,27 @@
+    main, cal; Run main
+    hcf; Halt program
+
+main: .argv = 2, .argc = 1, .exit_code = 0
+    0
+.loop:
+    dup, ldp + .argc, sub, .end, jeq; Terminate loop after last argument
+    dup, .first, jeq; Skip space before first argument
+    " ", stdout, sts; Write space to standard output
+.first:
+    dup, ldp + .argv, add, ldm; Load argument
+    stdout, print, cal, dis + 2; Print argument to standard output
+    inc, .loop, jmp; Next argument
+.end:
+    "\n", stdout, sts; Write newline to standard output
+    ret
+
+; Print string to stream
+print: .string = 1, .stream = 0
+    ldp + .string
+.loop:
+    dup, ldm; Load character
+    dup, .end, jeq; Terminate loop on null character
+    ldp + .stream, sts; Write character to stream
+    inc, .loop, jmp; Next character
+.end:
+    ret
