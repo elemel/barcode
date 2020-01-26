@@ -8,9 +8,9 @@ from barcode.register import Register
 from barcode.sparse_dict import SparseDict
 from barcode.stdio import StandardStream
 
-IR = Register.INSTRUCTION.value - 1
-SR = Register.STACK.value - 1
-FR = Register.FRAME.value - 1
+IR = Register.INSTRUCTION.value
+SR = Register.STACK.value
+FR = Register.FRAME.value
 
 HCF = MNEMONIC_TO_OPCODE['hcf']
 
@@ -87,12 +87,12 @@ class Process:
         heappush(self.heap, array)
 
     def step(self):
-        opcode = self.memory[self.registers[IR]]
+        opcode = self.memory[self.registers[IR]] % 1
 
-        if opcode.denominator == HCF:
+        if opcode == HCF:
             return False
 
-        operation = OPCODE_TO_OPERATION[opcode.denominator]
+        operation = OPCODE_TO_OPERATION[opcode]
         operation(self)
         self.registers[IR] += 1
         return True

@@ -9,7 +9,7 @@ class ProcessTest(unittest.TestCase):
     def test_halt(self):
         process = Process(assemble('''
 
-            13, /hcf
+            13, hcf
 
         '''))
 
@@ -20,12 +20,12 @@ class ProcessTest(unittest.TestCase):
         process = Process(assemble('''
 
                 0
-                function, /cal
-                /hcf
+                function, cal
+                hcf
 
             function:
-                13, /stp
-                /ret
+                13, stp
+                ret
 
         '''))
 
@@ -38,15 +38,15 @@ class ProcessTest(unittest.TestCase):
                 message
 
             loop:
-                /dup, /ldm
-                /dup
-                exit, /jeq
-                stdout, /sts
-                /inc
-                loop, /jmp
+                dup, ldm
+                dup
+                exit, jeq
+                stdout, sts
+                inc
+                loop, jmp
 
             exit:
-                0, /hcf
+                0, hcf
 
             message:
                 "Hello, World!\n", 0
@@ -59,38 +59,33 @@ class ProcessTest(unittest.TestCase):
     def test_echo(self):
         process = Process(assemble('''
 
-                main, /cal
-                /hcf
+                main, cal; Run main
+                hcf; Halt program
 
-            main:
+            main: main.exit_code = 0, main.argc = 1, main.argv = 2
                 0
             main.loop:
-                /dup, 2/ldp, /sub
-                main.end, /jeq
-                /dup
-                main.first, /jeq
-                " ", stdout, /sts
+                dup, ldp + main.argc, sub, main.break, jeq; Break after last argument
+                dup, main.first, jeq; Skip space before first argument
+                " ", stdout, sts; Write space to standard output
             main.first:
-                /dup, 3/ldp, /add
-                /ldm, stdout, print, /cal
-                2/dis
-                /inc
-                main.loop, /jmp
-            main.end:
-                "\n", stdout, /sts
-                /ret
+                dup, ldp + main.argv, add, ldm; Load argument
+                stdout, print, cal, top - 2; Print argument to standard output
+                inc, main.loop, jmp; Next argument
+            main.break:
+                "\n", stdout, sts; Write newline to standard output
+                ret
 
-            print:
-                2/ldp
+            ; Print string to stream
+            print: print.stream = 0, print.string = 1
+                ldp + print.string
             print.loop:
-                /dup, /ldm
-                /dup
-                print.end, /jeq
-                /ldp, /sts
-                /inc
-                print.loop, /jmp
-            print.end:
-                /ret
+                dup, ldm; Load character
+                dup, print.break, jeq; Break on null character
+                ldp + print.stream, sts; Write character to stream
+                inc, print.loop, jmp; Next character
+            print.break:
+                ret
 
         '''), args=['hello', 'world'])
 

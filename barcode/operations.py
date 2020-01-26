@@ -3,9 +3,9 @@ from fractions import Fraction as Q
 
 from barcode.register import Register
 
-IR = Register.INSTRUCTION.value - 1
-SR = Register.STACK.value - 1
-FR = Register.FRAME.value - 1
+IR = Register.INSTRUCTION.value
+SR = Register.STACK.value
+FR = Register.FRAME.value
 
 MNEMONIC_TO_OPCODE = {}
 OPCODE_TO_OPERATION = {}
@@ -37,17 +37,17 @@ def operation(opcode, mnemonic=None):
     return decorate
 
 
-@operation(81)
+@operation(Q(1, 81))
 def add(process):
     process.push(process.pop() + process.pop())
 
 
-@operation(33)
+@operation(Q(1, 33))
 def new(process):
     process.push(process.new())
 
 
-@operation(164, 'cal')
+@operation(Q(1, 164), 'cal')
 def call(process):
     address = process.pop()
 
@@ -58,33 +58,27 @@ def call(process):
     process.registers[FR] = process.registers[SR]
 
 
-@operation(9, 'dec')
+@operation(Q(1, 9), 'dec')
 def decrement(process):
     process.push(process.pop() - 1)
 
 
-@operation(211, 'del')
+@operation(Q(1, 211), 'del')
 def delete(process):
     process.delete(process.pop())
 
 
-@operation(171, 'den')
+@operation(Q(1, 171), 'den')
 def denominator(process):
     process.push(Q(process.pop().denominator))
 
 
-@operation(223, 'dis')
-def discard(process):
-    count = process.memory[process.registers[IR]].numerator
-    process.registers[SR] -= count
-
-
-@operation(76, 'div')
+@operation(Q(1, 76), 'div')
 def divide(process):
     process.push(process.pop() / process.pop())
 
 
-@operation(236, 'dup')
+@operation(Q(1, 236), 'dup')
 def duplicate(process):
     value = process.pop()
 
@@ -92,27 +86,27 @@ def duplicate(process):
     process.push(value)
 
 
-@operation(255, 'hcf')
+@operation(Q(1, 255), 'hcf')
 def halt(process):
     raise TerminatedError()
 
 
-@operation(143, 'inc')
+@operation(Q(1, 143), 'inc')
 def increment(process):
     process.push(process.pop() + 1)
 
 
-@operation(49, 'inv')
+@operation(Q(1, 49), 'inv')
 def invert(process):
     process.push(1 / process.pop())
 
 
-@operation(199, 'jmp')
+@operation(Q(1, 199), 'jmp')
 def jump(process):
     process.registers[IR] = process.pop() - 1
 
 
-@operation(252, 'jeq')
+@operation(Q(1, 252), 'jeq')
 def jump_equal(process):
     address = process.pop()
 
@@ -120,36 +114,39 @@ def jump_equal(process):
         process.registers[IR] = address - 1
 
 
-@operation(1, 'ldi')
+@operation(Q(0), 'ldi')
 def load_integer(process):
     process.push(Q(process.memory[process.registers[IR]].numerator))
 
 
-@operation(239, 'ldl')
+@operation(Q(1, 239), 'ldl')
 def load_local(process):
-    index = process.memory[process.registers[IR]].numerator
-    process.push(process.memory[process.registers[FR] + (index - 1)])
+    opcode = process.memory[process.registers[IR]]
+    index = opcode.numerator // opcode.denominator
+    process.push(process.memory[process.registers[FR] + index])
 
 
-@operation(18, 'ldm')
+@operation(Q(1, 18), 'ldm')
 def load_memory(process):
     address = process.pop()
     process.push(process.memory[address])
 
 
-@operation(241, 'ldp')
+@operation(Q(1, 241), 'ldp')
 def load_parameter(process):
-    index = process.memory[process.registers[IR]].numerator
-    process.push(process.memory[process.registers[FR] - (index + 2)])
+    opcode = process.memory[process.registers[IR]]
+    index = opcode.numerator // opcode.denominator
+    process.push(process.memory[process.registers[FR] - (index + 3)])
 
 
-@operation(227, 'ldr')
+@operation(Q(1, 227), 'ldr')
 def load_register(process):
-    index = process.memory[process.registers[IR]].numerator
-    process.push(process.memory[index - 1])
+    opcode = process.memory[process.registers[IR]]
+    index = opcode.numerator // opcode.denominator
+    process.push(process.memory[index])
 
 
-@operation(214, 'lds')
+@operation(Q(1, 214), 'lds')
 def load_stream(process):
     handle = process.pop()
     stream = process.streams[handle]
@@ -160,68 +157,77 @@ def load_stream(process):
     process.push(stream.popleft())
 
 
-@operation(107, 'mul')
+@operation(Q(1, 107), 'mul')
 def multiply(process):
     process.push(process.pop() * process.pop())
 
 
-@operation(147, 'neg')
+@operation(Q(1, 147), 'neg')
 def negate(process):
     process.push(-process.pop())
 
 
-@operation(222, 'num')
+@operation(Q(1, 222), 'num')
 def numerator(process):
     process.push(Q(process.pop().numerator))
 
 
-@operation(193, 'ret')
+@operation(Q(1, 193), 'ret')
 def return_(process):
     process.registers[SR] = process.registers[FR]
     process.registers[FR] = process.pop()
     process.registers[IR] = process.pop()
 
 
-@operation(251, 'stl')
+@operation(Q(1, 251), 'stl')
 def store_local(process):
-    index = process.memory[process.registers[IR]].numerator
-    process.memory[process.registers[FR] + (index - 1)] = process.pop()
+    opcode = process.memory[process.registers[IR]]
+    index = opcode.numerator // opcode.denominator
+    process.memory[process.registers[FR] + index] = process.pop()
 
 
-@operation(125, 'stm')
+@operation(Q(1, 125), 'stm')
 def store_memory(process):
     address = process.pop()
     process.memory[address] = process.pop()
 
 
-@operation(233, 'stp')
+@operation(Q(1, 233), 'stp')
 def store_parameter(process):
-    index = process.memory[process.registers[IR]].numerator
-    process.memory[process.registers[FR] - (index + 2)] = process.pop()
+    opcode = process.memory[process.registers[IR]]
+    index = opcode.numerator // opcode.denominator
+    process.memory[process.registers[FR] - (index + 3)] = process.pop()
 
 
-@operation(229, 'str')
+@operation(Q(1, 229), 'str')
 def store_register(process):
-    index = process.memory[process.registers[IR]].numerator
-    process.registers[index - 1] = process.pop()
+    opcode = process.memory[process.registers[IR]]
+    index = opcode.numerator // opcode.denominator
+    process.registers[index] = process.pop()
 
 
-@operation(245, 'sts')
+@operation(Q(1, 245), 'sts')
 def store_stream(process):
     handle = process.pop()
     stream = process.streams[handle]
     stream.append(process.pop())
 
 
-@operation(183, 'sub')
+@operation(Q(1, 183), 'sub')
 def subtract(process):
     process.push(process.pop() - process.pop())
 
 
-@operation(3, 'swp')
+@operation(Q(1, 3), 'swp')
 def swap(process):
     a = process.pop()
     b = process.pop()
 
     process.push(a)
     process.push(b)
+
+@operation(Q(1, 223), 'top')
+def top(process):
+    opcode = process.memory[process.registers[IR]]
+    offset = opcode.numerator // opcode.denominator
+    process.registers[SR] += offset

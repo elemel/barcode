@@ -156,45 +156,45 @@ class Visitor(NodeVisitor):
 def assemble(assembly_code):
     assembly_code += """
 
-        ir = 1
-        sr = 2
-        fr = 3
+        ir = 0
+        sr = 1
+        fr = 2
 
-        ldi = 1
-        swp = 3
-        dec = 9
-        ldm = 18
-        new = 33
-        inv = 49
-        div = 76
-        add = 81
-        mul = 107
-        stm = 125
-        inc = 143
-        neg = 147
-        cal = 164
-        den = 171
-        sub = 183
-        ret = 193
-        jmp = 199
-        del = 211
-        lds = 214
-        num = 222
-        dis = 223
-        ldr = 227
-        str = 229
-        stp = 233
-        dup = 236
-        ldl = 239
-        ldp = 241
-        sts = 245
-        stl = 251
-        jeq = 252
-        hcf = 255
+        ldi = 0
+        swp = 1/3
+        dec = 1/9
+        ldm = 1/18
+        new = 1/33
+        inv = 1/49
+        div = 1/76
+        add = 1/81
+        mul = 1/107
+        stm = 1/125
+        inc = 1/143
+        neg = 1/147
+        cal = 1/164
+        den = 1/171
+        sub = 1/183
+        ret = 1/193
+        jmp = 1/199
+        del = 1/211
+        lds = 1/214
+        num = 1/222
+        top = 1/223
+        ldr = 1/227
+        str = 1/229
+        stp = 1/233
+        dup = 1/236
+        ldl = 1/239
+        ldp = 1/241
+        sts = 1/245
+        stl = 1/251
+        jeq = 1/252
+        hcf = 1/255
 
-        stdin = 1
-        stdout = 2
-        stderr = 3
+        stdin = 0
+        stdout = 1
+        stderr = 2
 
     """
 
@@ -303,7 +303,11 @@ def assemble(assembly_code):
             for key, expression in errata.items():
                 if type(key) is str:
                     raise Exception(
-                        f'Undefined symbol or cyclic reference: {key}')
+                        f'Undefined symbol or cyclic reference: '
+                        f'{key} = {expression}')
+                else:
+                    raise Exception(
+                        f'Undefined symbol: {key}: {expression}')
 
     return machine_code
 

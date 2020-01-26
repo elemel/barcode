@@ -2,6 +2,6 @@ from enum import Enum
 
 
 class Register(Enum):
-    INSTRUCTION = 1
-    STACK = 2
-    FRAME = 3
+    INSTRUCTION = 0
+    STACK = 1
+    FRAME = 2
