@@ -9,23 +9,32 @@ grammar = Grammar(r"""
     line =
         space? (label space?)?
         (statement (space? ',' space? statement)* space?)?
-        comment? eol
+        comment? end_of_line
 
-    statement = constant / value / string
+    statement = constant / expression / string
 
     label = identifier space? ':'
-    constant = identifier space? '=' space? value
+    constant = identifier space? '=' space? expression
 
-    value = ((sign operand)? '/' operand) / (sign operand)
-    sign = '-'?
-    operand = natural / identifier
+    expression =
+        multiply_expression (space? add_operator space? multiply_expression)*
 
-    natural = ~'0|[1-9][0-9]*'
+    multiply_expression =
+        unary_expression (space? multiply_operator space? unary_expression)*
+
+    unary_expression = (unary_operator space?)* operand
+    operand = number / identifier / ('(' space? expression space? ')')
+
+    add_operator = '+' / '-'
+    multiply_operator = '*' / '/'
+    unary_operator = '+' / '-' / '*' / '/'
+
+    number = ~'0|[1-9][0-9]*'
     string = ~'"(\\[^\n]|[^"])*"'
     identifier = ~'[.A-Z_a-z][.0-9A-Z_a-z]*'
     space = ~'[ \t]+'
     comment = ~';.*'
-    eol = ~'\n|$'
+    end_of_line = ~'\n|$'
 """)
 
 
@@ -58,46 +67,87 @@ class Visitor(NodeVisitor):
         return line
 
     def visit_label(self, node, visited_children):
-        identifier, _, _ = visited_children
+        [_, identifier], _, _ = visited_children
         return 'label', identifier
 
     def visit_constant(self, node, visited_children):
-        identifier, _, _, _, value = visited_children
-        _, sign, numerator, denominator = value
-        return 'constant', identifier, sign, numerator, denominator
+        [_, identifier], _, _, _, [_, expression] = visited_children
+        return 'constant', identifier, expression
 
-    def visit_value(self, node, visited_children):
-        [value] = visited_children
+    def visit_expression(self, node, visited_children):
+        expression, expressions = visited_children
 
-        if len(value) == 3:
-            numerator, _, [denominator] = value
+        if not expressions:
+            return 'expression', expression
 
-            if numerator:
-                [[sign, [numerator]]] = numerator
-            else:
-                sign = 1
-                numerator = 1
-        else:
-            sign, [numerator] = value
-            denominator = 1
+        result = ['binary', expression]
 
-        return 'value', sign, numerator, denominator
+        for expression in expressions:
+            [_, operator, _, expression] = expression
+            result.append(operator)
+            result.append(expression)
 
-    def visit_sign(self, node, visited_children):
-        return -1 if node.text else 1
+        return 'expression', result
 
-    def visit_natural(self, node, visited_children):
-        return int(node.text)
+    def visit_multiply_expression(self, node, visited_children):
+        expression, expressions = visited_children
+
+        if not expressions:
+            return expression
+
+        result = ['binary', expression]
+
+        for expression in expressions:
+            [_, operator, _, expression] = expression
+            result.append(operator)
+            result.append(expression)
+
+        return result
+
+    def visit_unary_expression(self, node, visited_children):
+        operators, operand = visited_children
+
+        if not operators:
+            return operand
+
+        result = ['unary']
+
+        for operator in operators:
+            [operator, _] = operator
+            result.append(operator)
+
+        result.append(operand)
+        return result
+
+    def visit_operand(self, node, visited_children):
+        [operand] = visited_children
+
+        if type(operand) is list:
+            [_, _, [_, operand], _, _] = operand
+
+        return operand
+
+    def visit_add_operator(self, node, visited_children):
+        return node.text
+
+    def visit_multiply_operator(self, node, visited_children):
+        return node.text
+
+    def visit_unary_operator(self, node, visited_children):
+        return node.text
+
+    def visit_number(self, node, visited_children):
+        return 'number', int(node.text)
 
     def visit_string(self, node, visited_children):
         # TODO: Handle escapes properly
         return 'string', node.text[1:-1].replace('\\n', '\n')
 
     def visit_identifier(self, node, visited_children):
-        return node.text
+        return 'identifier', node.text
 
     def visit_whitespace(self, node, visited_children):
-        return ' '
+        return 'space', ' '
 
     def generic_visit(self, node, visited_children):
         return visited_children
@@ -155,89 +205,105 @@ def assemble(assembly_code):
     symbols = {}
     errata = {}
 
-    previous_symbol = None
+    def evaluate(expression):
+        if expression[0] == 'binary':
+            left = evaluate(expression[1])
 
-    def get_symbol(symbol):
-        if symbol.startswith('.'):
-            symbol = previous_symbol + symbol
+            if left is None:
+                return None
 
-        return symbol
+            for i in range(2, len(expression), 2):
+                right = evaluate(expression[i + 1])
 
-    def set_symbol(symbol):
-        nonlocal previous_symbol
+                if right is None:
+                    return None
 
-        if symbol.startswith('.'):
-            symbol = previous_symbol + symbol
+                operator = expression[i]
+
+                if operator == '+':
+                    left += right
+                elif operator == '-':
+                    left -= right
+                elif operator == '*':
+                    left *= right
+                elif operator == '/':
+                    left /= right
+                else:
+                    raise Exception(f'Invalid binary operator: {operator}')
+
+            return left
+        elif expression[0] == 'unary':
+            result = evaluate(expression[-1])
+
+            if result is None:
+                return None
+
+            for i in range(len(expression) - 2, 0, -1):
+                operator = expression[i]
+
+                if operator == '+':
+                    pass
+                elif operator == '-':
+                    result = -result
+                elif operator == '*':
+                    pass
+                elif operator == '/':
+                    result = 1 / result
+                else:
+                    raise Exception(f'Invalid unary operator: {operator}')
+
+            return result
+        elif expression[0] == 'number':
+            return Q(expression[1])
+        elif expression[0] == 'identifier':
+            return symbols.get(expression[1])
         else:
-            previous_symbol = symbol
-
-        return symbol
+            raise Exception(f'Invalid expression type: {expression[0]}')
 
     for statement in intermediate_code:
         if statement[0] == 'label':
-            identifier = set_symbol(statement[1])
+            _, identifier = statement
             symbols[identifier] = Q(len(machine_code))
         elif statement[0] == 'constant':
-            _, identifier, sign, numerator, denominator = statement
-            identifier = set_symbol(identifier)
+            _, identifier, expression = statement
+            value = evaluate(expression)
 
-            if type(numerator) is str:
-                numerator = get_symbol(numerator)
-                numerator = symbols.get(numerator, numerator)
-
-            if type(denominator) is str:
-                denominator = get_symbol(denominator)
-                denominator = symbols.get(denominator, denominator)
-
-            if type(numerator) is not str and type(denominator) is not str:
-                symbols[identifier] = Q(sign * numerator, denominator)
+            if value is not None:
+                symbols[identifier] = value
             else:
-                errata[identifier] = sign, numerator, denominator
-        elif statement[0] == 'value':
-            _, sign, numerator, denominator = statement
+                errata[identifier] = expression
+        elif statement[0] == 'expression':
+            _, expression = statement
+            value = evaluate(expression)
 
-            if type(numerator) is str:
-                numerator = get_symbol(numerator)
-                numerator = symbols.get(numerator, numerator)
-
-            if type(denominator) is str:
-                denominator = get_symbol(denominator)
-                denominator = symbols.get(denominator, denominator)
-
-            if type(numerator) is not str and type(denominator) is not str:
-                machine_code.append(Q(sign * numerator, denominator))
+            if value is not None:
+                machine_code.append(value)
             else:
-                errata[len(machine_code)] = sign, numerator, denominator
-                machine_code.append(Q(666))
+                errata[len(machine_code)] = expression
+                machine_code.append(Q(0))
         elif statement[0] == 'string':
             for char in statement[1]:
                 machine_code.append(Q(ord(char)))
         else:
-            raise Exception('Invalid statement type')
+            raise Exception(f'Invalid statement type: {statement[0]}')
 
     while errata:
-        for identifier, (sign, numerator, denominator) in errata.items():
-            numerator = symbols.get(numerator, numerator)
-            denominator = symbols.get(denominator, denominator)
+        for key, expression in errata.items():
+            value = evaluate(expression)
 
-            if type(numerator) is not str and type(denominator) is not str:
-                if type(identifier) is str:
-                    symbols[identifier] = Q(sign * numerator, denominator)
+            if value is not None:
+                if type(key) is str:
+                    symbols[key] = value
                 else:
-                    machine_code[identifier] = Q(sign * numerator, denominator)
+                    machine_code[key] = value
 
-                del errata[identifier]
+                del errata[key]
                 break
         else:
-            for _, (_, numerator, denominator) in errata.items():
-                for identifier in [numerator, denominator]:
-                    identifier = symbols.get(identifier, identifier)
-
-                    if type(identifier)is str:
-                        if identifier in errata:
-                            raise Exception(f'Cyclic reference: {identifier}')
-                        else:
-                            raise Exception(f'Undefined symbol: {identifier}')
+            for key, expression in errata.items():
+                if type(key) is str:
+                    raise Exception(
+                        f'Undefined symbol or cyclic reference: {key}')
 
     return machine_code
 
