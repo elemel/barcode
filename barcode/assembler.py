@@ -5,8 +5,13 @@ from parsimonious.grammar import Grammar, NodeVisitor
 
 grammar = Grammar(r"""
     program = line*
-    line = space? (statement (space? ',' space? statement)* space?)? comment? eol
-    statement = label / constant / value / string
+
+    line =
+        space? (label space?)?
+        (statement (space? ',' space? statement)* space?)?
+        comment? eol
+
+    statement = constant / value / string
 
     label = identifier space? ':'
     constant = identifier space? '=' space? value
@@ -36,7 +41,11 @@ class Visitor(NodeVisitor):
 
     def visit_line(self, node, visited_children):
         line = []
-        _, statements, _, _ = visited_children
+        _, label, statements, _, _ = visited_children
+
+        if label:
+            [[label, _]] = label
+            line.append(label)
 
         if statements:
             [[[statement], statements, _]] = statements
