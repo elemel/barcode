@@ -5,7 +5,7 @@ from parsimonious.grammar import Grammar, NodeVisitor
 
 grammar = Grammar(r"""
     program = line*
-    line = space? (statement (space statement)* space?)? comment? eol
+    line = space? (statement (space? ',' space? statement)* space?)? comment? eol
     statement = label / constant / value / string
 
     label = identifier space? ':'
@@ -18,7 +18,7 @@ grammar = Grammar(r"""
     natural = ~'0|[1-9][0-9]*'
     string = ~'"(\\[^\n]|[^"])*"'
     identifier = ~'[.A-Z_a-z][.0-9A-Z_a-z]*'
-    space = ~' +'
+    space = ~'[ \t]+'
     comment = ~';.*'
     eol = ~'\n|$'
 """)
@@ -43,7 +43,7 @@ class Visitor(NodeVisitor):
             line.append(statement)
 
             for statement in statements:
-                _, [statement] = statement
+                _, _, _, [statement] = statement
                 line.append(statement)
 
         return line

@@ -9,7 +9,7 @@ class ProcessTest(unittest.TestCase):
     def test_halt(self):
         process = Process(assemble('''
 
-            13 /hcf
+            13, /hcf
 
         '''))
 
@@ -20,11 +20,11 @@ class ProcessTest(unittest.TestCase):
         process = Process(assemble('''
 
                 0
-                function /cal
+                function, /cal
                 /hcf
 
             function:
-                13 /stp
+                13, /stp
                 /ret
 
         '''))
@@ -38,18 +38,18 @@ class ProcessTest(unittest.TestCase):
                 message
 
             loop:
-                /dup /ldm
+                /dup, /ldm
                 /dup
-                exit /jeq
-                stdout /sts
+                exit, /jeq
+                stdout, /sts
                 /inc
-                loop /jmp
+                loop, /jmp
 
             exit:
-                0 /hcf
+                0, /hcf
 
             message:
-                "Hello, World!\n" 0
+                "Hello, World!\n", 0
 
         '''))
 
@@ -59,36 +59,36 @@ class ProcessTest(unittest.TestCase):
     def test_echo(self):
         process = Process(assemble('''
 
-                main /cal
+                main, /cal
                 /hcf
 
             main:
                 0
             .loop:
-                /dup 2/ldp /sub
-                .end /jeq
+                /dup, 2/ldp, /sub
+                .end, /jeq
                 /dup
-                .first /jeq
-                " " stdout /sts
+                .first, /jeq
+                " ", stdout, /sts
             .first:
-                /dup 3/ldp /add
-                /ldm stdout print /cal
+                /dup, 3/ldp, /add
+                /ldm, stdout, print, /cal
                 2/dis
                 /inc
-                .loop /jmp
+                .loop, /jmp
             .end:
-                "\n" stdout /sts
+                "\n", stdout, /sts
                 /ret
 
             print:
                 2/ldp
             .loop:
-                /dup /ldm
+                /dup, /ldm
                 /dup
-                .end /jeq
-                /ldp /sts
+                .end, /jeq
+                /ldp, /sts
                 /inc
-                .loop /jmp
+                .loop, /jmp
             .end:
                 /ret
 
