@@ -4,11 +4,12 @@ from sys import stderr, stdin
 from parsimonious.grammar import Grammar, NodeVisitor
 
 grammar = Grammar(r"""
-    program = whitespace? (statement (whitespace statement)*)? whitespace?
+    program = line*
+    line = space? (statement (space statement)* space?)? comment? eol
     statement = label / constant / value / string
 
-    label = identifier whitespace? ':'
-    constant = identifier whitespace? '=' whitespace? value
+    label = identifier space? ':'
+    constant = identifier space? '=' space? value
 
     value = ((sign operand)? '/' operand) / (sign operand)
     sign = '-'?
@@ -16,25 +17,36 @@ grammar = Grammar(r"""
 
     natural = ~'0|[1-9][0-9]*'
     string = ~'"(\\[^\n]|[^"])*"'
-    identifier = ~"[.A-Z_a-z][.0-9A-Z_a-z]*"
-    whitespace = ~'([ \n]|#[^\n]*(\n|$))+'
+    identifier = ~'[.A-Z_a-z][.0-9A-Z_a-z]*'
+    space = ~' +'
+    comment = ~';.*'
+    eol = ~'\n|$'
 """)
 
 
 class Visitor(NodeVisitor):
     def visit_program(self, node, visited_children):
         program = []
-        _, statements, _ = visited_children
 
-        if statements:
-            [[[statement], statements]] = statements
-            program.append(statement)
-
-            for statement in statements:
-                _, [statement] = statement
+        for line in visited_children:
+            for statement in line:
                 program.append(statement)
 
         return program
+
+    def visit_line(self, node, visited_children):
+        line = []
+        _, statements, _, _ = visited_children
+
+        if statements:
+            [[[statement], statements, _]] = statements
+            line.append(statement)
+
+            for statement in statements:
+                _, [statement] = statement
+                line.append(statement)
+
+        return line
 
     def visit_label(self, node, visited_children):
         identifier, _, _ = visited_children
