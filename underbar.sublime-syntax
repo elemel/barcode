@@ -1,8 +1,8 @@
 %YAML 1.2
 ---
-name: Barcode Assembly
-file_extensions: [bsm]
-scope: source.bsm
+name: Underbar Assembly
+file_extensions: [ub]
+scope: source.ub
 
 contexts:
   main:

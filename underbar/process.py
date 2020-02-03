@@ -3,10 +3,10 @@ from fractions import Fraction as Q
 from heapq import heappop, heappush
 from sys import maxsize
 
-from barcode.operations import MNEMONIC_TO_OPCODE, OPCODE_TO_OPERATION
-from barcode.register import Register
-from barcode.sparse_dict import SparseDict
-from barcode.stdio import StandardStream
+from underbar.operations import MNEMONIC_TO_OPCODE, OPCODE_TO_OPERATION
+from underbar.register import Register
+from underbar.sparse_dict import SparseDict
+from underbar.stdio import StandardStream
 
 IR = Register.INSTRUCTION.value
 SR = Register.STACK.value

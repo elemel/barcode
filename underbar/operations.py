@@ -1,7 +1,7 @@
 from enum import Enum
 from fractions import Fraction as Q
 
-from barcode.register import Register
+from underbar.register import Register
 
 IR = Register.INSTRUCTION.value
 SR = Register.STACK.value
