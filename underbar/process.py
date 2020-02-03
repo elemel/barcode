@@ -3,7 +3,7 @@ from fractions import Fraction as Q
 from heapq import heappop, heappush
 from sys import maxsize
 
-from underbar.operations import MNEMONIC_TO_OPCODE, OPCODE_TO_OPERATION
+from underbar.operations import MNEMONIC_TO_OPCODE, DENOMINATOR_TO_OPERATION
 from underbar.register import Register
 from underbar.sparse_dict import SparseDict
 from underbar.stdio import StandardStream
@@ -12,7 +12,7 @@ IR = Register.INSTRUCTION.value
 SR = Register.STACK.value
 FR = Register.FRAME.value
 
-HCF = MNEMONIC_TO_OPCODE['hcf']
+HCF_DENOMINATOR = MNEMONIC_TO_OPCODE['hcf'].denominator
 
 STDIN = Q(StandardStream.INPUT.value)
 STDOUT = Q(StandardStream.OUTPUT.value)
@@ -87,12 +87,12 @@ class Process:
         heappush(self.heap, array)
 
     def step(self):
-        opcode = self.memory[self.registers[IR]] % 1
+        denominator = self.memory[self.registers[IR]].denominator
 
-        if opcode == HCF:
+        if denominator == HCF_DENOMINATOR:
             return False
 
-        operation = OPCODE_TO_OPERATION[opcode]
+        operation = DENOMINATOR_TO_OPERATION[denominator]
         operation(self)
         self.registers[IR] += 1
         return True

@@ -7,9 +7,9 @@ IR = Register.INSTRUCTION.value
 SR = Register.STACK.value
 FR = Register.FRAME.value
 
+DENOMINATOR_TO_OPERATION = {}
 MNEMONIC_TO_OPCODE = {}
 OPCODE_TO_OPERATION = {}
-
 
 class BlockedError(Exception):
     pass
@@ -24,14 +24,18 @@ def operation(opcode, mnemonic=None):
         nonlocal mnemonic
         mnemonic = mnemonic or func.__name__
 
-        if opcode in OPCODE_TO_OPERATION:
-            raise ValueError(f'Duplicate opcode: {opcode}')
+        if opcode.denominator in DENOMINATOR_TO_OPERATION:
+            raise ValueError(f'Duplicate denominator: {opcode.denominator}')
 
         if mnemonic in MNEMONIC_TO_OPCODE:
             raise ValueError(f'Duplicate mnemonic: {mnemonic}')
 
-        OPCODE_TO_OPERATION[opcode] = func
+        if opcode in OPCODE_TO_OPERATION:
+            raise ValueError(f'Duplicate opcode: {opcode}')
+
+        DENOMINATOR_TO_OPERATION[opcode.denominator] = func
         MNEMONIC_TO_OPCODE[mnemonic] = opcode
+        OPCODE_TO_OPERATION[opcode] = func
         return func
 
     return decorate
