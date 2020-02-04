@@ -45,7 +45,10 @@ def operation(opcode, mnemonic=None):
 
 @operation(Q(1, 81))
 def add(process, operand):
-    process.push(process.pop() + process.pop())
+    right = process.pop()
+    left = process.pop()
+
+    process.push(left + right)
 
 
 @operation(Q(1, 173), 'bal')
@@ -87,7 +90,10 @@ def denominator(process, operand):
 
 @operation(Q(1, 76), 'div')
 def divide(process, operand):
-    process.push(process.pop() / process.pop())
+    right = process.pop()
+    left = process.pop()
+
+    process.push(left / right)
 
 
 @operation(Q(1, 236), 'dup')
@@ -151,7 +157,10 @@ def load_register(process, operand):
 
 @operation(Q(1, 107), 'mul')
 def multiply(process, operand):
-    process.push(process.pop() * process.pop())
+    right = process.pop()
+    left = process.pop()
+
+    process.push(left * right)
 
 
 @operation(Q(1, 147), 'neg')
@@ -205,7 +214,10 @@ def store_register(process, operand):
 
 @operation(Q(1, 183), 'sub')
 def subtract(process, operand):
-    process.push(process.pop() - process.pop())
+    right = process.pop()
+    left = process.pop()
+
+    process.push(left - right)
 
 
 @operation(Q(1, 3), 'swp')
