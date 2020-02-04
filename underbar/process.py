@@ -2,9 +2,9 @@ from collections import defaultdict, deque
 from fractions import Fraction as Q
 from sys import maxsize
 
+from underbar.memory import Memory
 from underbar.operations import MNEMONIC_TO_OPCODE, DENOMINATOR_TO_OPERATION
 from underbar.register import Register
-from underbar.sparse_dict import SparseDict
 from underbar.stdio import StandardStream
 
 IR = Register.INSTRUCTION.value
@@ -21,10 +21,8 @@ STDOUT = Q(StandardStream.OUTPUT.value)
 class Process:
     def __init__(self, machine_code=[], args=[]):
         self.registers = len(Register) * [Q(0)]
-        self.memory = SparseDict(default=Q(0))
+        self.memory = Memory(1024)
         self.streams = defaultdict(deque)
-        self.max_denominator = 1
-        self.pool = []
 
         for i, q in enumerate(machine_code):
             self.memory[Q(i)] = q
@@ -61,14 +59,10 @@ class Process:
         return self.memory[self.registers[SR] - 1]
 
     def new(self):
-        if self.pool:
-            return self.pool.pop()
-
-        self.max_denominator += 1
-        return Q(1, self.max_denominator)
+        return self.memory.new(1024)
 
     def delete(self, array):
-        self.pool.append(array)
+        self.memory.delete(array)
 
     def step(self):
         denominator = self.memory[self.registers[IR]].denominator
