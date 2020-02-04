@@ -12,6 +12,7 @@ DENOMINATOR_TO_OPERATION = {}
 MNEMONIC_TO_OPCODE = {}
 OPCODE_TO_OPERATION = {}
 
+
 class BlockedError(Exception):
     pass
 
