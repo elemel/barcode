@@ -48,11 +48,6 @@ def add(process):
     process.push(process.pop() + process.pop())
 
 
-@operation(Q(1, 33))
-def new(process):
-    process.push(process.new())
-
-
 @operation(Q(1, 164), 'cal')
 def call(process):
     address = process.pop()
@@ -71,7 +66,7 @@ def decrement(process):
 
 @operation(Q(1, 211), 'del')
 def delete(process):
-    process.delete(process.pop())
+    process.memory.delete(process.pop())
 
 
 @operation(Q(1, 171), 'den')
@@ -171,6 +166,11 @@ def multiply(process):
 @operation(Q(1, 147), 'neg')
 def negate(process):
     process.push(-process.pop())
+
+
+@operation(Q(1, 33))
+def new(process):
+    process.push(process.memory.new(process.pop()))
 
 
 @operation(Q(1, 222), 'num')

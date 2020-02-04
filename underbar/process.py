@@ -21,7 +21,7 @@ STDOUT = Q(StandardStream.OUTPUT.value)
 class Process:
     def __init__(self, machine_code=[], args=[]):
         self.registers = len(Register) * [Q(0)]
-        self.memory = Memory(1024)
+        self.memory = Memory(len(machine_code))
         self.streams = defaultdict(deque)
 
         for i, q in enumerate(machine_code):
@@ -29,13 +29,13 @@ class Process:
 
         self.registers[IR] = Q(0)
         self.registers[JR] = Q(0)
-        self.registers[SR] = self.new()
+        self.registers[SR] = self.memory.new(1024)
         self.registers[FR] = self.registers[SR]
 
-        args_address = self.new()
+        args_address = self.memory.new(len(args))
 
         for i, arg in enumerate(args):
-            arg_address = self.new()
+            arg_address = self.memory.new(len(arg) + 1)
 
             for j, char in enumerate(arg):
                 self.memory[arg_address + j] = Q(ord(char))
@@ -57,12 +57,6 @@ class Process:
 
     def peek(self):
         return self.memory[self.registers[SR] - 1]
-
-    def new(self):
-        return self.memory.new(1024)
-
-    def delete(self, array):
-        self.memory.delete(array)
 
     def step(self):
         denominator = self.memory[self.registers[IR]].denominator
