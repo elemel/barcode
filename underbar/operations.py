@@ -216,6 +216,7 @@ def swap(process, operand):
     process.push(a)
     process.push(b)
 
+
 @operation(Q(1, 223), 'top')
 def top(process, operand):
     process.registers[SR] += operand
