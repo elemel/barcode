@@ -22,7 +22,7 @@ class Process:
     def __init__(self, machine_code=[], args=[]):
         self.registers = len(Register) * [Q(0)]
         self.memory = Memory(len(machine_code))
-        self.streams = defaultdict(deque)
+        self.streams = {handle.value: deque() for handle in StandardStream}
 
         for i, q in enumerate(machine_code):
             self.memory[Q(i)] = q
