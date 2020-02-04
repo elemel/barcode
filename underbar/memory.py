@@ -3,7 +3,7 @@ from fractions import Fraction as Q
 
 class Memory:
     def __init__(self, size):
-        self.arrays = [size * [0]]
+        self.arrays = [size * [Q(0)]]
         self.pool = []
 
     def __getitem__(self, key):
@@ -26,7 +26,7 @@ class Memory:
             key = Q(1, len(self.arrays))
 
         i = key.denominator - 1
-        self.arrays[i] = size * [0]
+        self.arrays[i] = size * [Q(0)]
         return key
 
     def delete(self, key):
