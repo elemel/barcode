@@ -18,29 +18,12 @@ STDIN = Q(StandardStream.INPUT.value)
 STDOUT = Q(StandardStream.OUTPUT.value)
 
 
-def generate_rationals(q=Q(0)):
-    assert 0 <= q < 1
-
-    yield q
-    dq = Q(1, q.denominator)
-
-    while True:
-        q += dq
-
-        if q.numerator == q.denominator:
-            dq = Q(1, dq.denominator + 1)
-            q = dq
-            yield q
-        elif q.denominator == dq.denominator:
-            yield q
-
-
 class Process:
     def __init__(self, machine_code=[], args=[]):
         self.registers = len(Register) * [Q(0)]
         self.memory = SparseDict(default=Q(0))
         self.streams = defaultdict(deque)
-        self.rationals = generate_rationals(Q(1, 2))
+        self.max_denominator = 1
         self.pool = []
 
         for i, q in enumerate(machine_code):
@@ -77,12 +60,12 @@ class Process:
     def peek(self):
         return self.memory[self.registers[SR] - 1]
 
-    # TODO: Allocate 1/3, 2/3, 1/4, 3/4, 1/5, 2/5, 3/5, 4/5, 1/6, 5/6, 1/7, ...
     def new(self):
         if self.pool:
             return self.pool.pop()
 
-        return next(self.rationals)
+        self.max_denominator += 1
+        return Q(1, self.max_denominator)
 
     def delete(self, array):
         self.pool.append(array)
