@@ -136,7 +136,7 @@ def load_local(process, operand):
 
 @operation(Q(1, 18), 'ldm')
 def load_memory(process, operand):
-    process.push(process.memory[process.pop()])
+    process.push(process.memory[process.pop() + operand])
 
 
 @operation(Q(1, 241), 'ldp')
@@ -190,7 +190,7 @@ def store_local(process, operand):
 @operation(Q(1, 125), 'stm')
 def store_memory(process, operand):
     address = process.pop()
-    process.memory[address] = process.pop()
+    process.memory[address + operand] = process.pop()
 
 
 @operation(Q(1, 233), 'stp')
