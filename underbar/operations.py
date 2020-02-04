@@ -87,6 +87,17 @@ def duplicate(process):
     process.push(value)
 
 
+@operation(Q(1, 214))
+def get(process):
+    handle = process.pop()
+    stream = process.streams[handle]
+
+    if not stream:
+        raise BlockedError()
+
+    process.push(stream.popleft())
+
+
 @operation(Q(1, 255), 'hcf')
 def halt(process):
     raise TerminatedError()
@@ -147,17 +158,6 @@ def load_register(process):
     process.push(process.memory[index])
 
 
-@operation(Q(1, 214), 'lds')
-def load_stream(process):
-    handle = process.pop()
-    stream = process.streams[handle]
-
-    if not stream:
-        raise BlockedError()
-
-    process.push(stream.popleft())
-
-
 @operation(Q(1, 107), 'mul')
 def multiply(process):
     process.push(process.pop() * process.pop())
@@ -176,6 +176,13 @@ def new(process):
 @operation(Q(1, 222), 'num')
 def numerator(process):
     process.push(Q(process.pop().numerator))
+
+
+@operation(Q(1, 245))
+def put(process):
+    handle = process.pop()
+    stream = process.streams[handle]
+    stream.append(process.pop())
 
 
 @operation(Q(1, 193), 'ret')
@@ -210,13 +217,6 @@ def store_register(process):
     opcode = process.memory[process.registers[IR]]
     index = opcode.numerator // opcode.denominator
     process.registers[index] = process.pop()
-
-
-@operation(Q(1, 245), 'sts')
-def store_stream(process):
-    handle = process.pop()
-    stream = process.streams[handle]
-    stream.append(process.pop())
 
 
 @operation(Q(1, 183), 'sub')

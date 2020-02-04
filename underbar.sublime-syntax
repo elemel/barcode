@@ -6,7 +6,7 @@ scope: source.ub
 
 contexts:
   main:
-    - match: \b(add|cal|dec|del|den|div|dup|hcf|inc|inv|jeq|jmp|ldi|ldl|ldm|ldp|ldr|lds|mul|neg|new|num|ret|stl|stm|stp|str|sts|sub|swp|top)\b
+    - match: \b(add|cal|dec|del|den|div|dup|get|hcf|inc|inv|jeq|jmp|ldi|ldl|ldm|ldp|ldr|mul|neg|new|num|put|ret|stl|stm|stp|str|sub|swp|top)\b
       scope: keyword.other
 
     - match: \b(ir|fr|jr|sr)\b

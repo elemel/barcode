@@ -179,7 +179,7 @@ def assemble(assembly_code):
         ret = 1/193
         jmp = 1/199
         del = 1/211
-        lds = 1/214
+        get = 1/214
         num = 1/222
         top = 1/223
         ldr = 1/227
@@ -188,7 +188,7 @@ def assemble(assembly_code):
         dup = 1/236
         ldl = 1/239
         ldp = 1/241
-        sts = 1/245
+        put = 1/245
         stl = 1/251
         jeq = 1/252
         hcf = 1/255

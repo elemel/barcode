@@ -9,7 +9,7 @@ class ProcessTest(unittest.TestCase):
     def test_halt(self):
         process = Process(assemble('''
 
-            13, hcf
+                13, hcf
 
         '''))
 
@@ -41,7 +41,7 @@ class ProcessTest(unittest.TestCase):
                 dup, ldm
                 dup
                 exit, jeq
-                stdout, sts
+                stdout, put
                 inc
                 loop, jmp
 
@@ -67,13 +67,13 @@ class ProcessTest(unittest.TestCase):
             main.loop:
                 dup, ldp + main.argc, sub, main.break, jeq; Break after last argument
                 dup, main.first, jeq; Skip space before first argument
-                " ", stdout, sts; Write space to standard output
+                " ", stdout, put; Write space to standard output
             main.first:
                 dup, ldp + main.argv, add, ldm; Load argument
                 stdout, print, cal, top - 2; Print argument to standard output
                 inc, main.loop, jmp; Next argument
             main.break:
-                "\n", stdout, sts; Write newline to standard output
+                "\n", stdout, put; Write newline to standard output
                 ret
 
             ; Print string to stream
@@ -82,7 +82,7 @@ class ProcessTest(unittest.TestCase):
             print.loop:
                 dup, ldm; Load character
                 dup, print.break, jeq; Break on null character
-                ldp + print.stream, sts; Write character to stream
+                ldp + print.stream, put; Write character to stream
                 inc, print.loop, jmp; Next character
             print.break:
                 ret
