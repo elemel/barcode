@@ -9,7 +9,7 @@ contexts:
     - match: \b(add|cal|dec|del|den|div|dup|hcf|inc|inv|jeq|jmp|ldi|ldl|ldm|ldp|ldr|lds|mul|neg|new|num|ret|stl|stm|stp|str|sts|sub|swp|top)\b
       scope: keyword.other
 
-    - match: \b(ir|fr|sr)\b
+    - match: \b(ir|fr|jr|sr)\b
       scope: variable.language
 
     - match: \b(stderr|stdin|stdout)\b

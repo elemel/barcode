@@ -4,6 +4,7 @@ from fractions import Fraction as Q
 from underbar.register import Register
 
 IR = Register.INSTRUCTION.value
+JR = Register.JUMP.value
 SR = Register.STACK.value
 FR = Register.FRAME.value
 
@@ -55,10 +56,10 @@ def new(process):
 def call(process):
     address = process.pop()
 
-    process.push(process.registers[IR]) # return address
+    process.push(process.registers[JR]) # return address
     process.push(process.registers[FR])
 
-    process.registers[IR] = address - 1
+    process.registers[JR] = address
     process.registers[FR] = process.registers[SR]
 
 
@@ -107,7 +108,7 @@ def invert(process):
 
 @operation(Q(1, 199), 'jmp')
 def jump(process):
-    process.registers[IR] = process.pop() - 1
+    process.registers[JR] = process.pop()
 
 
 @operation(Q(1, 252), 'jeq')
@@ -115,7 +116,7 @@ def jump_equal(process):
     address = process.pop()
 
     if not process.pop():
-        process.registers[IR] = address - 1
+        process.registers[JR] = address
 
 
 @operation(Q(0), 'ldi')
@@ -180,7 +181,7 @@ def numerator(process):
 def return_(process):
     process.registers[SR] = process.registers[FR]
     process.registers[FR] = process.pop()
-    process.registers[IR] = process.pop()
+    process.registers[JR] = process.pop()
 
 
 @operation(Q(1, 251), 'stl')

@@ -9,6 +9,7 @@ from underbar.sparse_dict import SparseDict
 from underbar.stdio import StandardStream
 
 IR = Register.INSTRUCTION.value
+JR = Register.JUMP.value
 SR = Register.STACK.value
 FR = Register.FRAME.value
 
@@ -47,6 +48,7 @@ class Process:
             self.memory[Q(i)] = q
 
         self.registers[IR] = Q(0)
+        self.registers[JR] = Q(0)
         self.registers[SR] = self.new()
         self.registers[FR] = self.registers[SR]
 
@@ -93,8 +95,9 @@ class Process:
             return False
 
         operation = DENOMINATOR_TO_OPERATION[denominator]
+        self.registers[JR] = self.registers[IR] + 1
         operation(self)
-        self.registers[IR] += 1
+        self.registers[IR] = self.registers[JR]
         return True
 
     def run(self):

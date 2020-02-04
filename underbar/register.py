@@ -3,5 +3,6 @@ from enum import Enum
 
 class Register(Enum):
     INSTRUCTION = 0
-    STACK = 1
-    FRAME = 2
+    JUMP = 1
+    STACK = 2
+    FRAME = 3

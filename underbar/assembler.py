@@ -157,8 +157,9 @@ def assemble(assembly_code):
     assembly_code += """
 
         ir = 0
-        sr = 1
-        fr = 2
+        jr = 1
+        sr = 2
+        fr = 3
 
         ldi = 0
         swp = 1/3
