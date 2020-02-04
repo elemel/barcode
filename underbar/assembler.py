@@ -189,7 +189,7 @@ def assemble(assembly_code):
         ldp = 1/241
         put = 1/245
         stl = 1/251
-        jeq = 1/252
+        beq = 1/252
         hcf = 1/255
 
         stdin = 0

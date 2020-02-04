@@ -4,8 +4,8 @@
 main: main.exit_code = 0, main.argc = 1, main.argv = 2
     0
 main.loop:
-    dup, ldp + main.argc, sub, main.break, jeq; Break after last argument
-    dup, main.first, jeq; Skip space before first argument
+    dup, ldp + main.argc, sub, beq + main.break; Break after last argument
+    dup, beq + main.first; Skip space before first argument
     " ", stdout, put; Write space to standard output
 main.first:
     dup, ldp + main.argv, add, ldm; Load argument
@@ -20,7 +20,7 @@ print: print.stream = 0, print.string = 1
     ldp + print.string
 print.loop:
     dup, ldm; Load character
-    dup, print.break, jeq; Break on null character
+    dup, beq + print.break; Break on null character
     ldp + print.stream, put; Write character to stream
     inc, print.loop, str + jr; Next character
 print.break:

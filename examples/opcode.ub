@@ -26,5 +26,5 @@ ldl = 1/239; load_local
 ldp = 1/241; load_parameter
 put = 1/245; put
 stl = 1/251; store_local
-jeq = 1/252; jump_equal
+beq = 1/252; branch_equal
 hcf = 1/255; halt

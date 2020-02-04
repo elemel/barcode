@@ -48,6 +48,15 @@ def add(process):
     process.push(process.pop() + process.pop())
 
 
+@operation(Q(1, 252), 'beq')
+def branch_equal(process):
+    opcode = process.memory[process.registers[IR]]
+    address = opcode.numerator // opcode.denominator
+
+    if not process.pop():
+        process.registers[JR] = address
+
+
 @operation(Q(1, 164), 'cal')
 def call(process):
     address = process.pop()
@@ -111,14 +120,6 @@ def increment(process):
 @operation(Q(1, 49), 'inv')
 def invert(process):
     process.push(1 / process.pop())
-
-
-@operation(Q(1, 252), 'jeq')
-def jump_equal(process):
-    address = process.pop()
-
-    if not process.pop():
-        process.registers[JR] = address
 
 
 @operation(Q(0), 'ldi')
