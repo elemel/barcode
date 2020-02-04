@@ -1,6 +1,5 @@
 from collections import defaultdict, deque
 from fractions import Fraction as Q
-from heapq import heappop, heappush
 from sys import maxsize
 
 from underbar.operations import MNEMONIC_TO_OPCODE, DENOMINATOR_TO_OPERATION
@@ -42,7 +41,7 @@ class Process:
         self.memory = SparseDict(default=Q(0))
         self.streams = defaultdict(deque)
         self.rationals = generate_rationals(Q(1, 2))
-        self.heap = []
+        self.pool = []
 
         for i, q in enumerate(machine_code):
             self.memory[Q(i)] = q
@@ -80,13 +79,13 @@ class Process:
 
     # TODO: Allocate 1/3, 2/3, 1/4, 3/4, 1/5, 2/5, 3/5, 4/5, 1/6, 5/6, 1/7, ...
     def new(self):
-        if self.heap:
-            return heappop(self.heap)
+        if self.pool:
+            return self.pool.pop()
 
         return next(self.rationals)
 
     def delete(self, array):
-        heappush(self.heap, array)
+        self.pool.append(array)
 
     def step(self):
         denominator = self.memory[self.registers[IR]].denominator
