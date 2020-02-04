@@ -48,6 +48,13 @@ def add(process):
     process.push(process.pop() + process.pop())
 
 
+@operation(Q(1, 173), 'bal')
+def branch_always(process):
+    opcode = process.memory[process.registers[IR]]
+    address = opcode.numerator // opcode.denominator
+    process.registers[JR] = address
+
+
 @operation(Q(1, 252), 'beq')
 def branch_equal(process):
     opcode = process.memory[process.registers[IR]]

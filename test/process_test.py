@@ -43,7 +43,7 @@ class ProcessTest(unittest.TestCase):
                 beq + exit
                 stdout, put
                 inc
-                loop, str + jr
+                bal + loop
 
             exit:
                 0, hcf
@@ -71,7 +71,7 @@ class ProcessTest(unittest.TestCase):
             main.first:
                 dup, ldp + main.argv, add, ldm; Load argument
                 stdout, print, cal, top - 2; Print argument to standard output
-                inc, main.loop, str + jr; Next argument
+                inc, bal + main.loop; Next argument
             main.break:
                 "\n", stdout, put; Write newline to standard output
                 ret
@@ -83,7 +83,7 @@ class ProcessTest(unittest.TestCase):
                 dup, ldm; Load character
                 dup, beq + print.break; Break on null character
                 ldp + print.stream, put; Write character to stream
-                inc, print.loop, str + jr; Next character
+                inc, bal + print.loop; Next character
             print.break:
                 ret
 

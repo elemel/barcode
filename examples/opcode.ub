@@ -12,6 +12,7 @@ inc = 1/143; increment
 neg = 1/147; negate
 cal = 1/164; call
 den = 1/171; denominator
+bal = 1/173; branch_always
 sub = 1/183; subtract
 ret = 1/193; return
 del = 1/211; delete

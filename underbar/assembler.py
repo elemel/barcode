@@ -175,6 +175,7 @@ def assemble(assembly_code):
         neg = 1/147
         cal = 1/164
         den = 1/171
+        bal = 1/173
         sub = 1/183
         ret = 1/193
         del = 1/211
