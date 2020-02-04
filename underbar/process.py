@@ -3,7 +3,10 @@ from fractions import Fraction as Q
 from sys import maxsize
 
 from underbar.memory import Memory
-from underbar.operations import MNEMONIC_TO_OPCODE, DENOMINATOR_TO_OPERATION
+
+from underbar.operations import (
+    BlockedError, TerminatedError, MNEMONIC_TO_OPCODE, OPCODE_TO_OPERATION)
+
 from underbar.register import Register
 from underbar.stdio import StandardStream
 
@@ -11,8 +14,6 @@ IR = Register.INSTRUCTION.value
 JR = Register.JUMP.value
 SR = Register.STACK.value
 FR = Register.FRAME.value
-
-HCF_DENOMINATOR = MNEMONIC_TO_OPCODE['hcf'].denominator
 
 STDIN = Q(StandardStream.INPUT.value)
 STDOUT = Q(StandardStream.OUTPUT.value)
@@ -59,20 +60,22 @@ class Process:
         return self.memory[self.registers[SR] - 1]
 
     def step(self):
-        denominator = self.memory[self.registers[IR]].denominator
+        opcode = self.memory[self.registers[IR]]
+        operand, opcode = divmod(opcode, 1)
+        operation = OPCODE_TO_OPERATION[opcode]
 
-        if denominator == HCF_DENOMINATOR:
-            return False
-
-        operation = DENOMINATOR_TO_OPERATION[denominator]
         self.registers[JR] = self.registers[IR] + 1
-        operation(self)
+        operation(self, operand)
         self.registers[IR] = self.registers[JR]
-        return True
 
     def run(self):
-        while self.step():
-            pass
+        try:
+            while True:
+                self.step()
+        except BlockedError:
+            return True
+        except TerminatedError:
+            return False
 
     def readLine(self, handle=STDOUT):
         chars = []
