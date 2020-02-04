@@ -177,7 +177,6 @@ def assemble(assembly_code):
         den = 1/171
         sub = 1/183
         ret = 1/193
-        jmp = 1/199
         del = 1/211
         get = 1/214
         num = 1/222

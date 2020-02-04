@@ -14,7 +14,6 @@ cal = 1/164; call
 den = 1/171; denominator
 sub = 1/183; subtract
 ret = 1/193; return
-jmp = 1/199; jump
 del = 1/211; delete
 get = 1/214; get
 num = 1/222; numerator

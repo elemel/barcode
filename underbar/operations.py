@@ -113,11 +113,6 @@ def invert(process):
     process.push(1 / process.pop())
 
 
-@operation(Q(1, 199), 'jmp')
-def jump(process):
-    process.registers[JR] = process.pop()
-
-
 @operation(Q(1, 252), 'jeq')
 def jump_equal(process):
     address = process.pop()
