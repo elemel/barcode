@@ -311,8 +311,3 @@ def assemble(assembly_code):
                         f'Undefined symbol: {key}: {expression}')
 
     return machine_code
-
-
-if __name__ == '__main__':
-    for q in assemble(stdin.read()):
-        print(q)
