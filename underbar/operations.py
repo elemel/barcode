@@ -64,28 +64,34 @@ def branch_equal(process, operand):
 
 @operation(Q(1, 164), 'cal')
 def call(process, operand):
-    address = process.pop()
+    function = process.pop()
 
-    process.push(process.registers[JR]) # return address
+    # Push return address and current frame
+    process.push(process.registers[JR])
     process.push(process.registers[FR])
 
-    process.registers[JR] = address
+    # Jump to function with new frame
+    process.registers[JR] = function
     process.registers[FR] = process.registers[SR]
 
 
 @operation(Q(1, 9), 'dec')
 def decrement(process, operand):
-    process.push(process.pop() - 1)
+    value = process.pop()
+    process.push(value - 1)
 
 
 @operation(Q(1, 211), 'del')
 def delete(process, operand):
-    process.memory.delete(process.pop())
+    array = process.pop()
+    process.memory.delete(array)
 
 
 @operation(Q(1, 171), 'den')
 def denominator(process, operand):
-    process.push(Q(process.pop().denominator))
+    value = process.pop()
+    value = Q(value.denominator)
+    process.push(value)
 
 
 @operation(Q(1, 76), 'div')
@@ -106,13 +112,16 @@ def duplicate(process, operand):
 
 @operation(Q(1, 214))
 def get(process, operand):
-    stream = process.streams[process.peek()]
+    handle = process.pop()
+    stream = process.streams[handle]
 
     if not stream:
+         # User can provide input and resume
+        process.push(handle)
         raise BlockedError()
 
-    process.pop()
-    process.push(stream.popleft())
+    value = stream.popleft()
+    process.push(value)
 
 
 @operation(Q(1, 255), 'hcf')
@@ -122,12 +131,14 @@ def halt(process, operand):
 
 @operation(Q(1, 143), 'inc')
 def increment(process, operand):
-    process.push(process.pop() + 1)
+    value = process.pop()
+    process.push(value + 1)
 
 
 @operation(Q(1, 49), 'inv')
 def invert(process, operand):
-    process.push(1 / process.pop())
+    value = process.pop()
+    process.push(1 / value)
 
 
 @operation(Q(0), 'ldi')
@@ -137,22 +148,29 @@ def load_integer(process, operand):
 
 @operation(Q(1, 239), 'ldl')
 def load_local(process, operand):
-    process.push(process.memory[process.registers[FR] + operand])
+    address = process.registers[FR] + operand
+    value = process.memory[address]
+    process.push(value)
 
 
 @operation(Q(1, 18), 'ldm')
 def load_memory(process, operand):
-    process.push(process.memory[process.pop() + operand])
+    address = process.pop() + operand
+    value = process.memory[address]
+    process.push(value)
 
 
 @operation(Q(1, 241), 'ldp')
 def load_parameter(process, operand):
-    process.push(process.memory[process.registers[FR] - (operand + 3)])
+    address = process.registers[FR] - (operand + 3)
+    value = process.memory[address]
+    process.push(value)
 
 
 @operation(Q(1, 227), 'ldr')
 def load_register(process, operand):
-    process.push(process.registers[operand])
+    value = process.registers[operand]
+    process.push(value)
 
 
 @operation(Q(1, 107), 'mul')
@@ -170,18 +188,25 @@ def negate(process, operand):
 
 @operation(Q(1, 33))
 def new(process, operand):
-    process.push(process.memory.new(process.pop()))
+    size = process.pop()
+    array = process.memory.new(size)
+    process.push(array)
 
 
 @operation(Q(1, 222), 'num')
 def numerator(process, operand):
-    process.push(Q(process.pop().numerator))
+    value = process.pop()
+    value = Q(value.numerator)
+    process.push(value)
 
 
 @operation(Q(1, 245))
 def put(process, operand):
-    stream = process.streams[process.pop()]
-    stream.append(process.pop())
+    handle = process.pop()
+    value = process.pop()
+
+    stream = process.streams[handle]
+    stream.append(value)
 
 
 @operation(Q(1, 193), 'ret')
@@ -193,23 +218,29 @@ def return_(process, operand):
 
 @operation(Q(1, 251), 'stl')
 def store_local(process, operand):
-    process.memory[process.registers[FR] + operand] = process.pop()
+    address = process.registers[FR] + operand
+    value = process.pop()
+    process.memory[address] = value
 
 
 @operation(Q(1, 125), 'stm')
 def store_memory(process, operand):
-    address = process.pop()
-    process.memory[address + operand] = process.pop()
+    address = process.pop() + operand
+    value = process.pop()
+    process.memory[address] = value
 
 
 @operation(Q(1, 233), 'stp')
 def store_parameter(process, operand):
-    process.memory[process.registers[FR] - (operand + 3)] = process.pop()
+    address = process.registers[FR] - (operand + 3)
+    value = process.pop()
+    process.memory[address] = value
 
 
 @operation(Q(1, 229), 'str')
 def store_register(process, operand):
-    process.registers[operand] = process.pop()
+    value = process.pop()
+    process.registers[operand] = value
 
 
 @operation(Q(1, 183), 'sub')
