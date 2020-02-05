@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class Register(Enum):
-    INSTRUCTION = 0
-    JUMP = 1
-    STACK = 2
-    FRAME = 3
+    IR = 0 # Instruction
+    JR = 1 # Jump
+    SR = 2 # Stack
+    FR = 3 # Frame

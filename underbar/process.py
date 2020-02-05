@@ -10,13 +10,13 @@ from underbar.operations import (
 from underbar.register import Register
 from underbar.stdio import StandardStream
 
-IR = Register.INSTRUCTION.value
-JR = Register.JUMP.value
-SR = Register.STACK.value
-FR = Register.FRAME.value
+IR = Register.IR.value
+JR = Register.JR.value
+SR = Register.SR.value
+FR = Register.FR.value
 
-STDIN = Q(StandardStream.INPUT.value)
-STDOUT = Q(StandardStream.OUTPUT.value)
+STDIN = Q(StandardStream.STDIN.value)
+STDOUT = Q(StandardStream.STDOUT.value)
 
 
 class Process:

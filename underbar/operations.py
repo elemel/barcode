@@ -3,10 +3,10 @@ from fractions import Fraction as Q
 
 from underbar.register import Register
 
-IR = Register.INSTRUCTION.value
-JR = Register.JUMP.value
-SR = Register.STACK.value
-FR = Register.FRAME.value
+IR = Register.IR.value
+JR = Register.JR.value
+SR = Register.SR.value
+FR = Register.FR.value
 
 DENOMINATOR_TO_OPERATION = {}
 MNEMONIC_TO_OPCODE = {}

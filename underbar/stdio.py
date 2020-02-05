@@ -2,6 +2,6 @@ from enum import Enum
 
 
 class StandardStream(Enum):
-    INPUT = 0
-    OUTPUT = 1
-    ERROR = 2
+    STDIN = 0
+    STDOUT = 1
+    STDERR = 2
