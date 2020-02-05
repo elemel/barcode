@@ -7,20 +7,20 @@ from underbar.process import Process
 
 
 def main():
-	assembly_code = open(sys.argv[1]).read()
-	machine_code = assemble(assembly_code)
+    assembly_code = open(sys.argv[1]).read()
+    machine_code = assemble(assembly_code)
 
-	process = Process(machine_code, sys.argv[2:])
-	process.run()
+    process = Process(machine_code, sys.argv[2:])
+    process.run()
 
-	while True:
-		line = process.readLine()
+    while True:
+        line = process.readLine()
 
-		if not line:
-			break
+        if not line:
+            break
 
-		print(line, end='')
+        print(line, end='')
 
 
 if __name__ == '__main__':
-	main()
+    main()

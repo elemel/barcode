@@ -6,14 +6,14 @@ from underbar.assembler import assemble
 
 
 def main():
-	assembly_code = ''
+    assembly_code = ''
 
-	for arg in sys.argv[1:]:
-		assembly_code += open(arg).read()
+    for arg in sys.argv[1:]:
+        assembly_code += open(arg).read()
 
-	for q in assemble(assembly_code):
-	    print(q)
+    for q in assemble(assembly_code):
+        print(q)
 
 
 if __name__ == '__main__':
-	main()
+    main()
