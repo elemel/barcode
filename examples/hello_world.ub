@@ -1,0 +1,15 @@
+    message
+
+loop:
+    dup, ldm
+    dup
+    beq + exit
+    stdout, put
+    inc
+    bal + loop
+
+exit:
+    0, hcf
+
+message:
+    "Hello, World!\n", 0

@@ -2,36 +2,56 @@
 ---
 name: Underbar Assembly
 file_extensions: [ub]
-scope: source.ub
+scope: source.underbar
 
 contexts:
   main:
     - match: \b(add|bal|beq|cal|dec|del|den|div|dup|get|hcf|inc|inv|ldi|ldl|ldm|ldp|ldr|mul|neg|new|num|put|ret|stl|stm|stp|str|sub|swp|top)\b
-      scope: keyword.other
+      scope: keyword.other.underbar
 
     - match: \b(ir|fr|jr|sr)\b
-      scope: variable.language
+      scope: variable.language.underbar
 
     - match: \b(stderr|stdin|stdout)\b
-      scope: variable.language
+      scope: variable.language.underbar
+
+    - match: '(\b[.A-Z_a-z][.0-9A-Z_a-z]*\b)\s*(:)'
+      captures:
+        1: entity.name.label.underbar
+        2: punctuation.separator.underbar
+
+    - match: '(\b[.A-Z_a-z][.0-9A-Z_a-z]*\b)\s*(=)'
+      captures:
+        1: variable.other.constant.underbar
+        2: punctuation.separator.underbar
 
     - match: \b[.A-Z_a-z][.0-9A-Z_a-z]*\b
-      scope: variable.other
+      scope: variable.other.underbar
 
     - match: \b0|[1-9][0-9]*\b
-      scope: constant.numeric.integer.decimal
+      scope: constant.numeric.integer.decimal.underbar
 
-    - match: '"(\\[^\n]|[^"])*"'
-      scope: string
-
-    - match: '[:=]'
-      scope: keyword.operator.assignment
+    - match: '='
+      scope: keyword.operator.assignment.underbar
 
     - match: '[-+/*]'
-      scope: keyword.operator.arithmetic
+      scope: keyword.operator.arithmetic.underbar
 
     - match: ','
-      scope: punctuation
+      scope: punctuation.underbar
 
     - match: ;[^\n]*(\n|$)
-      scope: comment
+      scope: comment.underbar
+
+    - match: '"'
+      scope: punctuation.definition.string.begin.underbar
+
+      push:
+        - meta_scope: string.quoted.double.underbar
+
+        - match: \\.
+          scope: constant.character.escape.underbar
+
+        - match: '"'
+          scope: punctuation.definition.string.end.underbar
+          pop: true
