@@ -1,3 +1,3 @@
 # underbar
 
-Stack-based rational virtual machine
+Rational stack machine
