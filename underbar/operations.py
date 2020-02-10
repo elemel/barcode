@@ -116,7 +116,7 @@ def get(process, operand):
     stream = process.streams[handle]
 
     if not stream:
-         # User can provide input and resume
+        # User can provide input and resume
         process.push(handle)
         raise BlockedError()
 

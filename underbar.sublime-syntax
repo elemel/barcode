@@ -9,7 +9,7 @@ contexts:
     - match: \b(add|bal|beq|cal|dec|del|den|div|dup|get|hcf|inc|inv|ldi|ldl|ldm|ldp|ldr|mul|neg|new|num|put|ret|stl|stm|stp|str|sub|swp|top)\b
       scope: keyword.other.underbar
 
-    - match: \b(ir|fr|jr|sr)\b
+    - match: \b(fr|ir|jr|sr)\b
       scope: variable.language.underbar
 
     - match: \b(stderr|stdin|stdout)\b
@@ -31,17 +31,16 @@ contexts:
     - match: \b0|[1-9][0-9]*\b
       scope: constant.numeric.integer.decimal.underbar
 
-    - match: '='
-      scope: keyword.operator.assignment.underbar
-
     - match: '[-+/*]'
       scope: keyword.operator.arithmetic.underbar
 
     - match: ','
       scope: punctuation.underbar
 
-    - match: ;[^\n]*(\n|$)
-      scope: comment.underbar
+    - match: (;|#)([^\n]*)(\n|$)
+      captures:
+        1: punctuation.separator.underbar
+        2: comment.underbar
 
     - match: '"'
       scope: punctuation.definition.string.begin.underbar
