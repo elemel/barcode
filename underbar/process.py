@@ -44,8 +44,8 @@ class Process:
             self.memory[arg_address + len(arg)] = Q(0)
             self.memory[args_address + i] = arg_address
 
-        self.push(args_address) # argv
         self.push(Q(len(args))) # argc
+        self.push(args_address) # argv
         self.push(Q(0)) # return value (exit code)
 
     def push(self, value):

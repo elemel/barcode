@@ -62,7 +62,7 @@ class ProcessTest(unittest.TestCase):
                 main, cal; Run main
                 hcf; Halt program
 
-            main: main.exit_code = 0, main.argc = 1, main.argv = 2
+            main: main.exit_code = 0, main.argv = 1, main.argc = 2
                 0
             main.loop:
                 dup, ldp + main.argc, sub, beq + main.break; Break after last argument
