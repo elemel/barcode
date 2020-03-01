@@ -39,6 +39,10 @@ grammar = Grammar(r"""
 
 
 class Visitor(NodeVisitor):
+    def __init__(self):
+        super().__init__()
+        self.prefix = None
+
     def visit_program(self, node, visited_children):
         program = []
 
@@ -68,10 +72,22 @@ class Visitor(NodeVisitor):
 
     def visit_label(self, node, visited_children):
         [_, identifier], _, _ = visited_children
+
+        if identifier.startswith('.'):
+            identifier = self.prefix + identifier
+        else:
+            self.prefix = identifier
+
         return 'label', identifier
 
     def visit_constant(self, node, visited_children):
         [_, identifier], _, _, _, [_, expression] = visited_children
+
+        if identifier.startswith('.'):
+            identifier = self.prefix + identifier
+        else:
+            self.prefix = identifier
+
         return 'constant', identifier, expression
 
     def visit_expression(self, node, visited_children):
@@ -124,6 +140,9 @@ class Visitor(NodeVisitor):
 
         if type(operand) is list:
             [_, _, [_, operand], _, _] = operand
+        elif operand[0] == 'identifier' and operand[1].startswith('.'):
+            _, identifier = operand
+            operand = 'identifier', self.prefix + identifier
 
         return operand
 

@@ -62,29 +62,29 @@ class ProcessTest(unittest.TestCase):
                 main, cal; Run main
                 hcf; Halt program
 
-            main: main.exit_code = 0, main.argv = 1, main.argc = 2
+            main: .exit_code = 0, .argv = 1, .argc = 2
                 0
-            main.loop:
-                dup, ldp + main.argc, sub, beq + main.break; Break after last argument
-                dup, beq + main.first; Skip space before first argument
+            .loop:
+                dup, ldp + .argc, sub, beq + .break; Break after last argument
+                dup, beq + .first; Skip space before first argument
                 " ", stdout, put; Write space to standard output
-            main.first:
-                dup, ldp + main.argv, add, ldm; Load argument
+            .first:
+                dup, ldp + .argv, add, ldm; Load argument
                 stdout, print, cal, top - 2; Print argument to standard output
-                inc, bal + main.loop; Next argument
-            main.break:
+                inc, bal + .loop; Next argument
+            .break:
                 "\n", stdout, put; Write newline to standard output
                 ret
 
             ; Print string to stream
-            print: print.stream = 0, print.string = 1
-                ldp + print.string
-            print.loop:
+            print: .stream = 0, .string = 1
+                ldp + .string
+            .loop:
                 dup, ldm; Load character
-                dup, beq + print.break; Break on null character
-                ldp + print.stream, put; Write character to stream
-                inc, bal + print.loop; Next character
-            print.break:
+                dup, beq + .break; Break on null character
+                ldp + .stream, put; Write character to stream
+                inc, bal + .loop; Next character
+            .break:
                 ret
 
         '''), args=['hello', 'world'])
