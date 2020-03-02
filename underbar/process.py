@@ -89,3 +89,13 @@ class Process:
                 break
 
         return ''.join(chars)
+
+    def write(self, s, handle=STDIN):
+        stream = self.streams[handle]
+
+        for c in s:
+            stream.append(ord(c))
+
+    def close(self, handle=STDIN):
+        stream = self.streams[handle]
+        stream.append(None)

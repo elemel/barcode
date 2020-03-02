@@ -3,6 +3,16 @@ import unittest
 
 from underbar.assembler import assemble
 from underbar.process import Process
+from underbar.register import Register
+from underbar.stdio import StandardStream
+
+IR = Register.IR.value
+JR = Register.JR.value
+SR = Register.SR.value
+FR = Register.FR.value
+
+STDIN = Q(StandardStream.STDIN.value)
+STDOUT = Q(StandardStream.STDOUT.value)
 
 
 class ProcessTest(unittest.TestCase):
@@ -91,6 +101,134 @@ class ProcessTest(unittest.TestCase):
 
         process.run()
         self.assertEqual(process.readLine(), 'hello world\n')
+
+    def test_get_integer_line(self):
+        process = Process(assemble('''
+
+            bootstrap:
+                stdin, 0, get_integer_line, cal
+                hcf
+
+            get_integer_line: .result = 0, .stream = 1
+                0, stp + .result; Initialize result
+                1; Positive sign
+                ldp + .stream, get; First character
+                dup, "-", sub, bne + .loop; If sign character
+                top - 1; Discard sign character
+                -1, mul; Negative sign
+                ldp + .stream, get; First character after sign
+            .loop:
+                dup, "\n", sub, beq + .break; Break on newline
+                "0", sub; Character to digit
+                ldp + .result, 10, mul; Multiply result by base
+                add, stp + .result; Add digit to result
+                ldp + .stream, get; Next character
+                bal + .loop
+            .break:
+                top - 1; Discard newline
+                ldp + .result, mul, stp + .result; Apply sign
+                ret
+
+        '''))
+
+        process.write('285793423\n')
+        process.run()
+        self.assertEqual(process.peek(), 285793423)
+
+    def test_get_integer_line_negative(self):
+        process = Process(assemble('''
+
+            bootstrap:
+                stdin, 0, get_integer_line, cal
+                hcf
+
+            get_integer_line: .result = 0, .stream = 1
+                0, stp + .result; Initialize result
+                1; Positive sign
+                ldp + .stream, get; First character
+                dup, "-", sub, bne + .loop; If sign character
+                top - 1; Discard sign character
+                -1, mul; Negative sign
+                ldp + .stream, get; First character after sign
+            .loop:
+                dup, "\n", sub, beq + .break; Break on newline
+                "0", sub; Character to digit
+                ldp + .result, 10, mul; Multiply result by base
+                add, stp + .result; Add digit to result
+                ldp + .stream, get; Next character
+                bal + .loop
+            .break:
+                top - 1; Discard newline
+                ldp + .result, mul, stp + .result; Apply sign
+                ret
+
+        '''))
+
+        process.write('-618584259\n')
+        process.run()
+        self.assertEqual(process.peek(), -618584259)
+
+    def test_put_integer_line(self):
+        process = Process(assemble('''
+
+            bootstrap:
+                285793423, stdout, put_integer_line, cal
+                hcf
+
+            put_integer_line: .stream = 0, .value = 1
+                1
+                ldp + .value, bge + .loop_1
+                "-", ldp + .stream, put
+                ldp + .value, neg, stp + .value
+            .loop_1:
+                10, mul
+                dup, ldp + .value, sub, ble + .loop_1
+            .loop_2:
+                10, div, flr
+                dup, beq + .break
+                dup, ldp + .value, swp, div, flr
+                "0", add, ldp + .stream, put
+                dup, ldp + .value, swp, mod, stp + .value
+                bal + .loop_2
+            .break:
+                "\n", ldp + .stream, put
+                ret
+
+        '''))
+
+        process.run()
+        self.assertEqual(process.readLine(), '285793423\n')
+
+    def test_put_integer_line_negative(self):
+        process = Process(assemble('''
+
+            bootstrap:
+                -618584259, stdout, put_integer_line, cal
+                hcf
+
+            put_integer_line: .stream = 0, .value = 1
+                1
+                ldp + .value, bge + .loop_1
+                "-", ldp + .stream, put
+                ldp + .value, neg, stp + .value
+            .loop_1:
+                10, mul
+                dup, ldp + .value, sub, ble + .loop_1
+            .loop_2:
+                10, div, flr
+                dup, beq + .break
+                dup, ldp + .value, swp, div, flr
+                "0", add, ldp + .stream, put
+                dup, ldp + .value, swp, mod, stp + .value
+                bal + .loop_2
+            .break:
+                "\n", ldp + .stream, put
+                ret
+
+        '''))
+
+        process.run()
+        self.assertEqual(process.readLine(), '-618584259\n')
 
 
 if __name__ == '__main__':
