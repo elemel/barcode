@@ -7,7 +7,6 @@ from underbar.register import Register
 from underbar.stdio import StandardStream
 
 IR = Register.IR.value
-JR = Register.JR.value
 DR = Register.DR.value
 CR = Register.CR.value
 
