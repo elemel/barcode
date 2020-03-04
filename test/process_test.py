@@ -9,7 +9,7 @@ from underbar.stdio import StandardStream
 IR = Register.IR.value
 JR = Register.JR.value
 DR = Register.DR.value
-FR = Register.FR.value
+CR = Register.CR.value
 
 STDIN = Q(StandardStream.STDIN.value)
 STDOUT = Q(StandardStream.STDOUT.value)

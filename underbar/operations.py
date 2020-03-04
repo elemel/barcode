@@ -6,7 +6,7 @@ from underbar.register import Register
 IR = Register.IR.value
 JR = Register.JR.value
 DR = Register.DR.value
-FR = Register.FR.value
+CR = Register.CR.value
 
 DENOMINATOR_TO_OPERATION = {}
 MNEMONIC_TO_OPCODE = {}
@@ -146,7 +146,7 @@ def duplicate(process, operand):
 
 @operation(Q(1, 115), 'ent')
 def enter(process, operand):
-    process.registers[FR] += operand
+    process.registers[CR] += operand
 
 
 @operation(Q(1, 206), 'flr')
@@ -193,7 +193,7 @@ def invert(process, operand):
 
 @operation(Q(1, 239), 'ldl')
 def load_local(process, operand):
-    address = process.registers[FR] - 1 - operand
+    address = process.registers[CR] - 1 - operand
     value = process.memory[address]
     process.push(value)
 
@@ -262,7 +262,7 @@ def put(process, operand):
 
 @operation(Q(1, 193), 'ret')
 def return_(process, operand):
-    process.registers[FR] -= operand
+    process.registers[CR] -= operand
     process.registers[JR] = process.pop_frame()
 
 
@@ -283,7 +283,7 @@ def size(process, operand):
 
 @operation(Q(1, 251), 'stl')
 def store_local(process, operand):
-    address = process.registers[FR] - 1 - operand
+    address = process.registers[CR] - 1 - operand
     value = process.pop()
     process.memory[address] = value
 

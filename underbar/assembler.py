@@ -178,7 +178,7 @@ def assemble(assembly_code):
         ir = 0
         jr = 1
         dr = 2
-        fr = 3
+        cr = 3
 
         add = 1/81; add
         bal = 1/173; branch_always
