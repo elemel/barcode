@@ -99,14 +99,8 @@ def branch_not_equal(process, operand):
 @operation(Q(1, 164), 'cal')
 def call(process, operand):
     function = process.pop()
-
-    # Push return address and current frame
-    process.push(process.registers[JR])
-    process.push(process.registers[FR])
-
-    # Jump to function with new frame
+    process.push_frame(process.registers[JR])
     process.registers[JR] = function
-    process.registers[FR] = process.registers[SR]
 
 
 @operation(Q(1, 9), 'dec')
@@ -142,6 +136,11 @@ def duplicate(process, operand):
 
     process.push(value)
     process.push(value)
+
+
+@operation(Q(1, 115), 'ent')
+def enter(process, operand):
+    process.registers[FR] += operand
 
 
 @operation(Q(1, 206), 'flr')
@@ -193,7 +192,7 @@ def load_integer(process, operand):
 
 @operation(Q(1, 239), 'ldl')
 def load_local(process, operand):
-    address = process.registers[FR] + operand
+    address = process.registers[FR] - 1 - operand
     value = process.memory[address]
     process.push(value)
 
@@ -201,13 +200,6 @@ def load_local(process, operand):
 @operation(Q(1, 18), 'ldm')
 def load_memory(process, operand):
     address = process.pop() + operand
-    value = process.memory[address]
-    process.push(value)
-
-
-@operation(Q(1, 241), 'ldp')
-def load_parameter(process, operand):
-    address = process.registers[FR] - (operand + 3)
     value = process.memory[address]
     process.push(value)
 
@@ -264,9 +256,8 @@ def put(process, operand):
 
 @operation(Q(1, 193), 'ret')
 def return_(process, operand):
-    process.registers[SR] = process.registers[FR]
-    process.registers[FR] = process.pop()
-    process.registers[JR] = process.pop()
+    process.registers[FR] -= operand
+    process.registers[JR] = process.pop_frame()
 
 
 @operation(Q(1, 2), 'siz')
@@ -286,7 +277,7 @@ def size(process, operand):
 
 @operation(Q(1, 251), 'stl')
 def store_local(process, operand):
-    address = process.registers[FR] + operand
+    address = process.registers[FR] - 1 - operand
     value = process.pop()
     process.memory[address] = value
 
@@ -294,13 +285,6 @@ def store_local(process, operand):
 @operation(Q(1, 125), 'stm')
 def store_memory(process, operand):
     address = process.pop() + operand
-    value = process.pop()
-    process.memory[address] = value
-
-
-@operation(Q(1, 233), 'stp')
-def store_parameter(process, operand):
-    address = process.registers[FR] - (operand + 3)
     value = process.pop()
     process.memory[address] = value
 

@@ -1,10 +1,10 @@
-bootstrap:
     main, cal
     hcf
 
 main:
 .sum = 0
-    0; Initialize sum
+    ent + 1
+    0, ldl + .sum; Initialize sum
 .loop:
     stdin, siz, blt + .break; Break on EOF
     stdin, 0, get_integer_line, cal
@@ -13,43 +13,47 @@ main:
     bal + .loop
 .break:
     ldl + .sum, stdout, put_integer_line, cal
-    ret
+    ret + 1
 
-get_integer_line: .result = 0, .stream = 1
-    0, stp + .result; Initialize result
+; [stream] -> [result]
+get_integer_line: .stream = 0, .result = 1
+    ent + 2, stl + .stream
+    0, stl + .result; Initialize result
     1; Positive sign
-    ldp + .stream, get; First character
+    ldl + .stream, get; First character
     dup, "-", sub, bne + .loop; If sign character
     top - 1; Discard sign character
     -1, mul; Negative sign
-    ldp + .stream, get; First character after sign
+    ldl + .stream, get; First character after sign
 .loop:
     dup, "\n", sub, beq + .break; Break on newline
     "0", sub; Character to digit
-    ldp + .result, 10, mul; Multiply result by base
-    add, stp + .result; Add digit to result
-    ldp + .stream, get; Next character
+    ldl + .result, 10, mul; Multiply result by base
+    add, stl + .result; Add digit to result
+    ldl + .stream, get; Next character
     bal + .loop
 .break:
     top - 1; Discard newline
-    ldp + .result, mul, stp + .result; Apply sign
-    ret
+    ldl + .result, mul, stl + .result; Apply sign
+    ldl + .result, ret + 2
 
+; [stream, value] -> []
 put_integer_line: .stream = 0, .value = 1
+    ent + 2, stl + .stream, stl + .value
     1
-    ldp + .value, bge + .loop_1
-    "-", ldp + .stream, put
-    ldp + .value, neg, stp + .value
+    ldl + .value, bge + .loop_1
+    "-", ldl + .stream, put
+    ldl + .value, neg, stl + .value
 .loop_1:
     10, mul
-    dup, ldp + .value, sub, ble + .loop_1
+    dup, ldl + .value, sub, ble + .loop_1
 .loop_2:
     10, div, flr
     dup, beq + .break
-    dup, ldp + .value, swp, div, flr
-    "0", add, ldp + .stream, put
-    dup, ldp + .value, swp, mod, stp + .value
+    dup, ldl + .value, swp, div, flr
+    "0", add, ldl + .stream, put
+    dup, ldl + .value, swp, mod, stl + .value
     bal + .loop_2
 .break:
-    "\n", ldp + .stream, put
-    ret
+    "\n", ldl + .stream, put
+    ret + 2

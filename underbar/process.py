@@ -31,7 +31,7 @@ class Process:
         self.registers[IR] = Q(0)
         self.registers[JR] = Q(0)
         self.registers[SR] = self.memory.new(1024)
-        self.registers[FR] = self.registers[SR]
+        self.registers[FR] = self.memory.new(1024)
 
         args_address = self.memory.new(len(args))
 
@@ -44,9 +44,8 @@ class Process:
             self.memory[arg_address + len(arg)] = Q(0)
             self.memory[args_address + i] = arg_address
 
-        self.push(Q(len(args))) # argc
         self.push(args_address) # argv
-        self.push(Q(0)) # return value (exit code)
+        self.push(Q(len(args))) # argc
 
     def push(self, value):
         self.memory[self.registers[SR]] = value
@@ -55,6 +54,14 @@ class Process:
     def pop(self):
         self.registers[SR] -= 1
         return self.memory[self.registers[SR]]
+
+    def push_frame(self, value):
+        self.memory[self.registers[FR]] = value
+        self.registers[FR] += 1
+
+    def pop_frame(self):
+        self.registers[FR] -= 1
+        return self.memory[self.registers[FR]]
 
     def peek(self):
         return self.memory[self.registers[SR] - 1]

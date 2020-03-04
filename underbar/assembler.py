@@ -194,6 +194,7 @@ def assemble(assembly_code):
         den = 1/171; denominator
         div = 1/76; divide
         dup = 1/236; duplicate
+        ent = 1/115; enter
         flr = 1/206; duplicate
         get = 1/214; get
         hcf = 1/255; halt
@@ -202,7 +203,6 @@ def assemble(assembly_code):
         ldi = 0; load_integer
         ldl = 1/239; load_local
         ldm = 1/18; load_memory
-        ldp = 1/241; load_parameter
         ldr = 1/227; load_register
         mod = 1/200; modulo
         mul = 1/107; multiply
@@ -214,7 +214,6 @@ def assemble(assembly_code):
         siz = 1/2; size
         stl = 1/251; store_local
         stm = 1/125; store_memory
-        stp = 1/233; store_parameter
         str = 1/229; store_register
         sub = 1/183; subtract
         swp = 1/3; swap
