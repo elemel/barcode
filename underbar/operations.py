@@ -103,6 +103,12 @@ def call(process, operand):
     process.registers[JR] = function
 
 
+@operation(Q(1, 213), 'clo')
+def call_operand(process, operand):
+    process.push_frame(process.registers[JR])
+    process.registers[JR] = operand
+
+
 @operation(Q(1, 9), 'dec')
 def decrement(process, operand):
     value = process.pop()
