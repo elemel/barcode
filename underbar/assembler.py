@@ -200,9 +200,9 @@ def assemble(assembly_code):
         hcf = 1/255; halt
         inc = 1/143; increment
         inv = 1/49; invert
-        ldi = 0; load_integer
         ldl = 1/239; load_local
         ldm = 1/18; load_memory
+        ldo = 0; load_operand
         ldr = 1/227; load_register
         mod = 1/200; modulo
         mul = 1/107; multiply

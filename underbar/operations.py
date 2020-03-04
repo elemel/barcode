@@ -185,11 +185,6 @@ def invert(process, operand):
     process.push(1 / value)
 
 
-@operation(Q(0), 'ldi')
-def load_integer(process, operand):
-    process.push(Q(operand))
-
-
 @operation(Q(1, 239), 'ldl')
 def load_local(process, operand):
     address = process.registers[FR] - 1 - operand
@@ -202,6 +197,11 @@ def load_memory(process, operand):
     address = process.pop() + operand
     value = process.memory[address]
     process.push(value)
+
+
+@operation(Q(0), 'ldo')
+def load_operand(process, operand):
+    process.push(Q(operand))
 
 
 @operation(Q(1, 227), 'ldr')
