@@ -175,7 +175,7 @@ class Visitor(NodeVisitor):
 def assemble(assembly_code):
     assembly_code += """
 
-        ir = 0
+        pr = 0
         dr = 1
         cr = 2
 

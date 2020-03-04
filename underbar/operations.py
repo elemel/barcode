@@ -3,7 +3,7 @@ from fractions import Fraction as Q
 
 from underbar.register import Register
 
-IR = Register.IR.value
+PR = Register.PR.value
 DR = Register.DR.value
 CR = Register.CR.value
 
@@ -56,56 +56,56 @@ def add(process, operand):
 
 @operation(Q(1, 173), 'bal')
 def branch_always(process, operand):
-    process.registers[IR] = operand
+    process.registers[PR] = operand
 
 
 @operation(Q(1, 252), 'beq')
 def branch_equal(process, operand):
     if not process.pop():
-        process.registers[IR] = operand
+        process.registers[PR] = operand
 
 
 @operation(Q(1, 7), 'bge')
 def branch_greater_equal(process, operand):
     if process.pop() >= 0:
-        process.registers[IR] = operand
+        process.registers[PR] = operand
 
 
 @operation(Q(1, 51), 'bgt')
 def branch_greater_than(process, operand):
     if process.pop() > 0:
-        process.registers[IR] = operand
+        process.registers[PR] = operand
 
 
 @operation(Q(1, 55), 'ble')
 def branch_less_equal(process, operand):
     if process.pop() <= 0:
-        process.registers[IR] = operand
+        process.registers[PR] = operand
 
 
 @operation(Q(1, 248), 'blt')
 def branch_less_than(process, operand):
     if process.pop() < 0:
-        process.registers[IR] = operand
+        process.registers[PR] = operand
 
 
 @operation(Q(1, 106), 'bne')
 def branch_not_equal(process, operand):
     if process.pop():
-        process.registers[IR] = operand
+        process.registers[PR] = operand
 
 
 @operation(Q(1, 164), 'cal')
 def call(process, operand):
     function = process.pop()
-    process.push_frame(process.registers[IR])
-    process.registers[IR] = function
+    process.push_frame(process.registers[PR])
+    process.registers[PR] = function
 
 
 @operation(Q(1, 213), 'clo')
 def call_operand(process, operand):
-    process.push_frame(process.registers[IR])
-    process.registers[IR] = operand
+    process.push_frame(process.registers[PR])
+    process.registers[PR] = operand
 
 
 @operation(Q(1, 9), 'dec')
@@ -162,12 +162,12 @@ def get(process, operand):
 
     if not stream:
         # User can provide input and resume
-        process.registers[IR] -= 1
+        process.registers[PR] -= 1
         raise BlockedError()
 
     if stream[0] is None:
         # End of file
-        process.registers[IR] -= 1
+        process.registers[PR] -= 1
         raise ClosedError()
 
     process.pop()
@@ -177,7 +177,7 @@ def get(process, operand):
 
 @operation(Q(1, 255), 'hcf')
 def halt(process, operand):
-    process.registers[IR] -= 1
+    process.registers[PR] -= 1
     raise TerminatedError()
 
 
@@ -265,7 +265,7 @@ def put(process, operand):
 @operation(Q(1, 193), 'ret')
 def return_(process, operand):
     process.registers[CR] -= operand
-    process.registers[IR] = process.pop_frame()
+    process.registers[PR] = process.pop_frame()
 
 
 @operation(Q(1, 2), 'siz')

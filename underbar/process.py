@@ -10,7 +10,7 @@ from underbar.operations import (
 from underbar.register import Register
 from underbar.stdio import StandardStream
 
-IR = Register.IR.value
+PR = Register.PR.value
 DR = Register.DR.value
 CR = Register.CR.value
 
@@ -27,7 +27,7 @@ class Process:
         for i, q in enumerate(machine_code):
             self.memory[Q(i)] = q
 
-        self.registers[IR] = Q(0)
+        self.registers[PR] = Q(0)
         self.registers[DR] = self.memory.new(1024)
         self.registers[CR] = self.memory.new(1024)
 
@@ -65,8 +65,8 @@ class Process:
         return self.memory[self.registers[DR] - 1]
 
     def step(self):
-        opcode = self.memory[self.registers[IR]]
-        self.registers[IR] += 1
+        opcode = self.memory[self.registers[PR]]
+        self.registers[PR] += 1
         operand, opcode = divmod(opcode, 1)
         operation = OPCODE_TO_OPERATION[opcode]
         operation(self, operand)
