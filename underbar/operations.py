@@ -5,7 +5,7 @@ from underbar.register import Register
 
 IR = Register.IR.value
 JR = Register.JR.value
-SR = Register.SR.value
+DR = Register.DR.value
 FR = Register.FR.value
 
 DENOMINATOR_TO_OPERATION = {}
@@ -320,4 +320,4 @@ def swap(process, operand):
 
 @operation(Q(1, 223), 'top')
 def top(process, operand):
-    process.registers[SR] += operand
+    process.registers[DR] += operand

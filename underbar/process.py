@@ -12,7 +12,7 @@ from underbar.stdio import StandardStream
 
 IR = Register.IR.value
 JR = Register.JR.value
-SR = Register.SR.value
+DR = Register.DR.value
 FR = Register.FR.value
 
 STDIN = Q(StandardStream.STDIN.value)
@@ -30,7 +30,7 @@ class Process:
 
         self.registers[IR] = Q(0)
         self.registers[JR] = Q(0)
-        self.registers[SR] = self.memory.new(1024)
+        self.registers[DR] = self.memory.new(1024)
         self.registers[FR] = self.memory.new(1024)
 
         args_address = self.memory.new(len(args))
@@ -48,12 +48,12 @@ class Process:
         self.push(Q(len(args))) # argc
 
     def push(self, value):
-        self.memory[self.registers[SR]] = value
-        self.registers[SR] += 1
+        self.memory[self.registers[DR]] = value
+        self.registers[DR] += 1
 
     def pop(self):
-        self.registers[SR] -= 1
-        return self.memory[self.registers[SR]]
+        self.registers[DR] -= 1
+        return self.memory[self.registers[DR]]
 
     def push_frame(self, value):
         self.memory[self.registers[FR]] = value
@@ -64,7 +64,7 @@ class Process:
         return self.memory[self.registers[FR]]
 
     def peek(self):
-        return self.memory[self.registers[SR] - 1]
+        return self.memory[self.registers[DR] - 1]
 
     def step(self):
         opcode = self.memory[self.registers[IR]]

@@ -177,7 +177,7 @@ def assemble(assembly_code):
 
         ir = 0
         jr = 1
-        sr = 2
+        dr = 2
         fr = 3
 
         add = 1/81; add
