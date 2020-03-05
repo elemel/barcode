@@ -79,7 +79,7 @@ class ProcessTest(unittest.TestCase):
                 ldl + .stream, put; Write character to stream
                 inc, bal + .loop; Next character
             .break:
-                top - 2
+                pop, pop
                 ret + 1
 
             message:
@@ -110,7 +110,7 @@ class ProcessTest(unittest.TestCase):
                 stdout, cli + print; Print argument to standard output
                 inc, bal + .loop; Next argument
             .break:
-                top - 1
+                pop
                 "\n", stdout, put; Write newline to standard output
                 0, ret + 2
 
@@ -124,7 +124,7 @@ class ProcessTest(unittest.TestCase):
                 ldl + .stream, put; Write character to stream
                 inc, bal + .loop; Next character
             .break:
-                top - 2
+                pop, pop
                 ret + 1
 
         '''), args=['hello', 'world'])
@@ -145,8 +145,8 @@ class ProcessTest(unittest.TestCase):
                 1; Positive sign
                 ldl + .stream, get; First character
                 dup, "-", sub, bne + .loop; If sign character
-                top - 1; Discard sign character
-                -1, mul; Negative sign
+                pop; Discard sign character
+                neg; Negative sign
                 ldl + .stream, get; First character after sign
             .loop:
                 dup, "\n", sub, beq + .break; Break on newline
@@ -156,7 +156,7 @@ class ProcessTest(unittest.TestCase):
                 ldl + .stream, get; Next character
                 bal + .loop
             .break:
-                top - 1; Discard newline
+                pop; Discard newline
                 ldl + .result, mul, stl + .result; Apply sign
                 ldl + .result, ret + 2
 
@@ -179,8 +179,8 @@ class ProcessTest(unittest.TestCase):
                 1; Positive sign
                 ldl + .stream, get; First character
                 dup, "-", sub, bne + .loop; If sign character
-                top - 1; Discard sign character
-                -1, mul; Negative sign
+                pop; Discard sign character
+                neg; Negative sign
                 ldl + .stream, get; First character after sign
             .loop:
                 dup, "\n", sub, beq + .break; Break on newline
@@ -190,7 +190,7 @@ class ProcessTest(unittest.TestCase):
                 ldl + .stream, get; Next character
                 bal + .loop
             .break:
-                top - 1; Discard newline
+                pop; Discard newline
                 ldl + .result, mul, stl + .result; Apply sign
                 ldl + .result, ret + 2
 

@@ -9,7 +9,7 @@ main:
     stdin, siz, blt + .break; Break on EOF
     stdin, 0, cli + get_integer_line
     3, div, flr, 2, sub
-    ldl + .sum, add, stl + .sum, top - 1
+    ldl + .sum, add, stl + .sum, pop
     bal + .loop
 .break:
     ldl + .sum, stdout, cli + put_integer_line
@@ -22,8 +22,8 @@ get_integer_line: .stream = 0, .result = 1
     1; Positive sign
     ldl + .stream, get; First character
     dup, "-", sub, bne + .loop; If sign character
-    top - 1; Discard sign character
-    -1, mul; Negative sign
+    pop; Discard sign character
+    neg; Negative sign
     ldl + .stream, get; First character after sign
 .loop:
     dup, "\n", sub, beq + .break; Break on newline
@@ -33,11 +33,11 @@ get_integer_line: .stream = 0, .result = 1
     ldl + .stream, get; Next character
     bal + .loop
 .break:
-    top - 1; Discard newline
+    pop; Discard newline
     ldl + .result, mul, stl + .result; Apply sign
     ldl + .result, ret + 2
 
-; [stream, value] -> []
+; [value, stream] -> []
 put_integer_line: .stream = 0, .value = 1
     ent + 2, stl + .stream, stl + .value
     1

@@ -1,7 +1,7 @@
     cli + main; Run main
     hcf; Halt program
 
-; [argc, argv] -> [exit_code]
+; [argv, argc] -> [exit_code]
 main: .argc = 0, .argv = 1
     ent + 2, stl + .argc, stl + .argv
     0
@@ -14,11 +14,11 @@ main: .argc = 0, .argv = 1
     stdout, cli + print; Print argument to standard output
     inc, bal + .loop; Next argument
 .break:
-    top - 1
+    pop
     "\n", stdout, put; Write newline to standard output
     0, ret + 2
 
-; [stream, string] -> []
+; [string, stream] -> []
 print: .stream = 0
     ent + 1
     stl + .stream
@@ -28,5 +28,5 @@ print: .stream = 0
     ldl + .stream, put; Write character to stream
     inc, bal + .loop; Next character
 .break:
-    top - 2
+    pop, pop
     ret + 1

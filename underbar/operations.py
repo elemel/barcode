@@ -253,6 +253,11 @@ def numerator(process, operand):
     process.push(value)
 
 
+@operation(Q(1, 223))
+def pop(process, operand):
+    process.registers[DR] -= 1
+
+
 @operation(Q(1, 245))
 def put(process, operand):
     handle = process.pop()
@@ -318,8 +323,3 @@ def swap(process, operand):
 
     process.push(a)
     process.push(b)
-
-
-@operation(Q(1, 223), 'top')
-def top(process, operand):
-    process.registers[DR] += operand

@@ -209,6 +209,7 @@ def assemble(assembly_code):
         neg = 1/147; negate
         new = 1/33; new
         num = 1/222; numerator
+        pop = 1/223; pop
         put = 1/245; put
         ret = 1/193; return_
         siz = 1/2; size
@@ -217,7 +218,6 @@ def assemble(assembly_code):
         str = 1/229; store_register
         sub = 1/183; subtract
         swp = 1/3; swap
-        top = 1/223; top
 
         stdin = 0
         stdout = 1
