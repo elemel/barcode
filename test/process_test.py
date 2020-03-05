@@ -28,7 +28,7 @@ class ProcessTest(unittest.TestCase):
     def test_call(self):
         process = Process(assemble('''
 
-                clo + function
+                cli + function
                 hcf
 
             function:
@@ -66,7 +66,7 @@ class ProcessTest(unittest.TestCase):
     def test_print(self):
         process = Process(assemble('''
 
-                13, message, stdout, clo + print
+                13, message, stdout, cli + print
                 hcf
 
             ; [stream, string] -> []
@@ -94,7 +94,7 @@ class ProcessTest(unittest.TestCase):
     def test_echo(self):
         process = Process(assemble('''
 
-                clo + main; Run main
+                cli + main; Run main
                 hcf; Halt program
 
             ; [argc, argv] -> [exit_code]
@@ -107,7 +107,7 @@ class ProcessTest(unittest.TestCase):
                 " ", stdout, put; Write space to standard output
             .first:
                 dup, ldl + .argv, add, ldm; Load argument
-                stdout, clo + print; Print argument to standard output
+                stdout, cli + print; Print argument to standard output
                 inc, bal + .loop; Next argument
             .break:
                 top - 1
@@ -135,7 +135,7 @@ class ProcessTest(unittest.TestCase):
     def test_get_integer_line(self):
         process = Process(assemble('''
 
-                stdin, clo + get_integer_line
+                stdin, cli + get_integer_line
                 hcf
 
             ; [stream] -> [result]
@@ -169,7 +169,7 @@ class ProcessTest(unittest.TestCase):
     def test_get_integer_line_negative(self):
         process = Process(assemble('''
 
-                stdin, clo + get_integer_line
+                stdin, cli + get_integer_line
                 hcf
 
             ; [stream] -> [result]
@@ -203,7 +203,7 @@ class ProcessTest(unittest.TestCase):
     def test_put_integer_line(self):
         process = Process(assemble('''
 
-                285793423, stdout, clo + put_integer_line
+                285793423, stdout, cli + put_integer_line
                 hcf
 
             ; [stream, value] -> []
@@ -235,7 +235,7 @@ class ProcessTest(unittest.TestCase):
     def test_put_integer_line_negative(self):
         process = Process(assemble('''
 
-                -618584259, stdout, clo + put_integer_line
+                -618584259, stdout, cli + put_integer_line
                 hcf
 
             ; [stream, value] -> []

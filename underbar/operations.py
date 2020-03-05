@@ -102,8 +102,8 @@ def call(process, operand):
     process.registers[PR] = function
 
 
-@operation(Q(1, 213), 'clo')
-def call_operand(process, operand):
+@operation(Q(1, 213), 'cli')
+def call_integer(process, operand):
     process.push_frame(process.registers[PR])
     process.registers[PR] = operand
 

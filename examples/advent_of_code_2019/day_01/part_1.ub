@@ -1,4 +1,4 @@
-    clo + main
+    cli + main
     hcf
 
 main:
@@ -7,12 +7,12 @@ main:
     0, ldl + .sum; Initialize sum
 .loop:
     stdin, siz, blt + .break; Break on EOF
-    stdin, 0, clo + get_integer_line
+    stdin, 0, cli + get_integer_line
     3, div, flr, 2, sub
     ldl + .sum, add, stl + .sum, top - 1
     bal + .loop
 .break:
-    ldl + .sum, stdout, clo + put_integer_line
+    ldl + .sum, stdout, cli + put_integer_line
     ret + 1
 
 ; [stream] -> [result]

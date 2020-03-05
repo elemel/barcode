@@ -6,7 +6,7 @@ scope: source.underbar
 
 contexts:
   main:
-    - match: \b(add|bal|beq|bge|bgt|ble|blt|bne|cal|clo|dec|del|den|div|dup|ent|flr|get|hcf|inc|inv|ldl|ldm|ldo|ldr|mod|mul|neg|new|num|put|ret|siz|stl|stm|str|sub|swp|top)\b
+    - match: \b(add|bal|beq|bge|bgt|ble|blt|bne|cal|cli|dec|del|den|div|dup|ent|flr|get|hcf|inc|inv|ldl|ldm|ldo|ldr|mod|mul|neg|new|num|put|ret|siz|stl|stm|str|sub|swp|top)\b
       scope: keyword.other.underbar
 
     - match: \b(cr|dr|pr)\b

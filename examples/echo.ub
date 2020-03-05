@@ -1,4 +1,4 @@
-    clo + main; Run main
+    cli + main; Run main
     hcf; Halt program
 
 ; [argc, argv] -> [exit_code]
@@ -11,7 +11,7 @@ main: .argc = 0, .argv = 1
     " ", stdout, put; Write space to standard output
 .first:
     dup, ldl + .argv, add, ldm; Load argument
-    stdout, clo + print; Print argument to standard output
+    stdout, cli + print; Print argument to standard output
     inc, bal + .loop; Next argument
 .break:
     top - 1

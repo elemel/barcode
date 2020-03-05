@@ -188,7 +188,7 @@ def assemble(assembly_code):
         blt = 1/248; branch_less_than
         bne = 1/106; branch_not_equal
         cal = 1/164; call
-        clo = 1/213; call_operand
+        cli = 1/213; call_integer
         dec = 1/9; decrement
         del = 1/211; delete
         den = 1/171; denominator
