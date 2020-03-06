@@ -148,11 +148,10 @@ def enter(process, operand):
     process.registers[CR] += operand
 
 
-@operation(Q(1, 206), 'flr')
-def duplicate(process, operand):
+@operation(Q(1, 206), 'fdi')
+def floor_divide_integer(process, operand):
     value = process.pop()
-    value //= 1
-    process.push(value)
+    process.push(Q(value // operand))
 
 
 @operation(Q(1, 214))

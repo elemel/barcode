@@ -8,7 +8,7 @@ main:
 .loop:
     stdin, siz, blt + .break; Break on EOF
     stdin, cli + get_integer_line
-    3, div, flr, 2, sub
+    fdi + 3, 2, sub
     ldl + .sum, add, stl + .sum
     bal + .loop
 .break:
@@ -50,9 +50,9 @@ put_integer_line:
     10, mul
     dup, ldl + .value, sub, ble + .loop_1
 .loop_2:
-    10, div, flr
+    fdi + 10
     dup, beq + .break
-    dup, ldl + .value, swp, div, flr
+    dup, ldl + .value, swp, div, fdi + 1
     "0", add, ldl + .stream, put
     dup, ldl + .value, swp, mod, stl + .value
     bal + .loop_2

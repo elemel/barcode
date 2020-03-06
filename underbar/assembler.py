@@ -195,7 +195,7 @@ def assemble(assembly_code):
         div = 1/76; divide
         dup = 1/236; duplicate
         ent = 1/115; enter
-        flr = 1/206; duplicate
+        fdi = 1/206; floor_divide_integer
         get = 1/214; get
         hcf = 1/255; halt
         inv = 1/49; invert

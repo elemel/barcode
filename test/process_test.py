@@ -217,9 +217,9 @@ class ProcessTest(unittest.TestCase):
                 10, mul
                 dup, ldl + .value, sub, ble + .loop_1
             .loop_2:
-                10, div, flr
+                fdi + 10
                 dup, beq + .break
-                dup, ldl + .value, swp, div, flr
+                dup, ldl + .value, swp, div, fdi + 1
                 "0", add, ldl + .stream, put
                 dup, ldl + .value, swp, mod, stl + .value
                 bal + .loop_2
@@ -249,9 +249,9 @@ class ProcessTest(unittest.TestCase):
                 10, mul
                 dup, ldl + .value, sub, ble + .loop_1
             .loop_2:
-                10, div, flr
+                fdi + 10
                 dup, beq + .break
-                dup, ldl + .value, swp, div, flr
+                dup, ldl + .value, swp, div, fdi + 1
                 "0", add, ldl + .stream, put
                 dup, ldl + .value, swp, mod, stl + .value
                 bal + .loop_2
