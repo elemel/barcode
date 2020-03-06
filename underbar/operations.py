@@ -54,6 +54,12 @@ def add(process, operand):
     process.push(left + right)
 
 
+@operation(Q(1, 113), 'adi')
+def add_integer(process, operand):
+    value = process.pop()
+    process.push(value + operand)
+
+
 @operation(Q(1, 173), 'bal')
 def branch_always(process, operand):
     process.registers[PR] = operand
@@ -106,12 +112,6 @@ def call(process, operand):
 def call_integer(process, operand):
     process.push_frame(process.registers[PR])
     process.registers[PR] = operand
-
-
-@operation(Q(1, 9), 'dec')
-def decrement(process, operand):
-    value = process.pop()
-    process.push(value - 1)
 
 
 @operation(Q(1, 211), 'del')
@@ -179,12 +179,6 @@ def get(process, operand):
 def halt(process, operand):
     process.registers[PR] -= 1
     raise TerminatedError()
-
-
-@operation(Q(1, 143), 'inc')
-def increment(process, operand):
-    value = process.pop()
-    process.push(value + 1)
 
 
 @operation(Q(1, 49), 'inv')

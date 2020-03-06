@@ -49,7 +49,7 @@ class ProcessTest(unittest.TestCase):
                 dup
                 beq + exit
                 stdout, put
-                inc
+                adi + 1
                 bal + loop
 
             exit:
@@ -77,7 +77,7 @@ class ProcessTest(unittest.TestCase):
                 dup, ldm; Load character
                 dup, beq + .break; Break on null character
                 ldl + .stream, put; Write character to stream
-                inc, bal + .loop; Next character
+                adi + 1, bal + .loop; Next character
             .break:
                 pop, pop
                 ret + 1
@@ -108,7 +108,7 @@ class ProcessTest(unittest.TestCase):
             .first:
                 dup, ldl + .argv, add, ldm; Load argument
                 stdout, cli + print; Print argument to standard output
-                inc, bal + .loop; Next argument
+                adi + 1, bal + .loop; Next argument
             .break:
                 pop
                 "\n", stdout, put; Write newline to standard output
@@ -122,7 +122,7 @@ class ProcessTest(unittest.TestCase):
                 dup, ldm; Load character
                 dup, beq + .break; Break on null character
                 ldl + .stream, put; Write character to stream
-                inc, bal + .loop; Next character
+                adi + 1, bal + .loop; Next character
             .break:
                 pop, pop
                 ret + 1

@@ -180,6 +180,7 @@ def assemble(assembly_code):
         cr = 2
 
         add = 1/81; add
+        adi = 1/113; add_integer
         bal = 1/173; branch_always
         beq = 1/252; branch_equal
         bge = 1/7; branch_greater_equal
@@ -189,7 +190,6 @@ def assemble(assembly_code):
         bne = 1/106; branch_not_equal
         cal = 1/164; call
         cli = 1/213; call_integer
-        dec = 1/9; decrement
         del = 1/211; delete
         den = 1/171; denominator
         div = 1/76; divide
@@ -198,7 +198,6 @@ def assemble(assembly_code):
         flr = 1/206; duplicate
         get = 1/214; get
         hcf = 1/255; halt
-        inc = 1/143; increment
         inv = 1/49; invert
         ldi = 0; load_integer
         ldl = 1/239; load_local

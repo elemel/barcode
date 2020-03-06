@@ -5,7 +5,7 @@ loop:
     dup
     beq + exit
     stdout, put
-    inc
+    adi + 1
     bal + loop
 
 exit:
