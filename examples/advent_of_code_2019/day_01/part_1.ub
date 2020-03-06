@@ -3,20 +3,21 @@
 
 main:
 .sum = 0
-    ent + 1
-    0, ldl + .sum; Initialize sum
+    ent + 1, pop, pop
+    0, stl + .sum; Initialize sum
 .loop:
     stdin, siz, blt + .break; Break on EOF
-    stdin, 0, cli + get_integer_line
+    stdin, cli + get_integer_line
     3, div, flr, 2, sub
-    ldl + .sum, add, stl + .sum, pop
+    ldl + .sum, add, stl + .sum
     bal + .loop
 .break:
     ldl + .sum, stdout, cli + put_integer_line
-    ret + 1
+    0, ret + 1
 
 ; [stream] -> [result]
-get_integer_line: .stream = 0, .result = 1
+get_integer_line:
+.stream = 0, .result = 1
     ent + 2, stl + .stream
     0, stl + .result; Initialize result
     1; Positive sign
@@ -38,7 +39,8 @@ get_integer_line: .stream = 0, .result = 1
     ldl + .result, ret + 2
 
 ; [value, stream] -> []
-put_integer_line: .stream = 0, .value = 1
+put_integer_line:
+.stream = 0, .value = 1
     ent + 2, stl + .stream, stl + .value
     1
     ldl + .value, bge + .loop_1
