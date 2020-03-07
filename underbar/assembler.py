@@ -203,6 +203,7 @@ def assemble(assembly_code):
         ldl = 1/239; load_local
         ldm = 1/18; load_memory
         ldr = 1/227; load_register
+        mli = 1/63; multiply_integer
         mod = 1/200; modulo
         mul = 1/107; multiply
         neg = 1/147; negate

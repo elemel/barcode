@@ -151,7 +151,7 @@ class ProcessTest(unittest.TestCase):
             .loop:
                 dup, "\n", sub, beq + .break; Break on newline
                 "0", sub; Character to digit
-                ldl + .result, 10, mul; Multiply result by base
+                ldl + .result, mli + 10; Multiply result by base
                 add, stl + .result; Add digit to result
                 ldl + .stream, get; Next character
                 bal + .loop
@@ -185,7 +185,7 @@ class ProcessTest(unittest.TestCase):
             .loop:
                 dup, "\n", sub, beq + .break; Break on newline
                 "0", sub; Character to digit
-                ldl + .result, 10, mul; Multiply result by base
+                ldl + .result, mli + 10; Multiply result by base
                 add, stl + .result; Add digit to result
                 ldl + .stream, get; Next character
                 bal + .loop
@@ -214,7 +214,7 @@ class ProcessTest(unittest.TestCase):
                 "-", ldl + .stream, put
                 ldl + .value, neg, stl + .value
             .loop_1:
-                10, mul
+                mli + 10
                 dup, ldl + .value, sub, ble + .loop_1
             .loop_2:
                 fdi + 10
@@ -246,7 +246,7 @@ class ProcessTest(unittest.TestCase):
                 "-", ldl + .stream, put
                 ldl + .value, neg, stl + .value
             .loop_1:
-                10, mul
+                mli + 10
                 dup, ldl + .value, sub, ble + .loop_1
             .loop_2:
                 fdi + 10

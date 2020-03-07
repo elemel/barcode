@@ -227,6 +227,12 @@ def multiply(process, operand):
     process.push(left * right)
 
 
+@operation(Q(1, 63), 'mli')
+def multiply_integer(process, operand):
+    value = process.pop()
+    process.push(value * operand)
+
+
 @operation(Q(1, 147), 'neg')
 def negate(process, operand):
     process.push(-process.pop())
