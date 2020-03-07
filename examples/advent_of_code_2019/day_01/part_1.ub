@@ -8,7 +8,7 @@ main:
 .loop:
     stdin, siz, blt + .break; Break on EOF
     stdin, cli + get_integer_line
-    fdi + 3, 2, sub
+    fdi + 3, adi - 2
     ldl + .sum, add, stl + .sum
     bal + .loop
 .break:
