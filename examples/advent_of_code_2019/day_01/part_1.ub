@@ -22,13 +22,13 @@ get_integer_line:
     0, stl + .result; Initialize result
     1; Positive sign
     ldl + .stream, get; First character
-    dup, "-", sub, bne + .loop; If sign character
+    dup, adi - '-', bne + .loop; If sign character
     pop; Discard sign character
     neg; Negative sign
     ldl + .stream, get; First character after sign
 .loop:
-    dup, "\n", sub, beq + .break; Break on newline
-    "0", sub; Character to digit
+    dup, adi - '\n', beq + .break; Break on newline
+    adi - '0'; Character to digit
     ldl + .result, mli + 10; Multiply result by base
     add, stl + .result; Add digit to result
     ldl + .stream, get; Next character
@@ -44,7 +44,7 @@ put_integer_line:
     ent + 2, stl + .stream, stl + .value
     1
     ldl + .value, bge + .loop_1
-    "-", ldl + .stream, put
+    '-', ldl + .stream, put
     ldl + .value, neg, stl + .value
 .loop_1:
     mli + 10
@@ -53,9 +53,9 @@ put_integer_line:
     fdi + 10
     dup, beq + .break
     dup, ldl + .value, swp, div, fdi + 1
-    "0", add, ldl + .stream, put
+    adi + '0', ldl + .stream, put
     dup, ldl + .value, swp, mod, stl + .value
     bal + .loop_2
 .break:
-    "\n", ldl + .stream, put
+    '\n', ldl + .stream, put
     ret + 2

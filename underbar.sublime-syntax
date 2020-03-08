@@ -54,3 +54,16 @@ contexts:
         - match: '"'
           scope: punctuation.definition.string.end.underbar
           pop: true
+
+    - match: ''''
+      scope: punctuation.definition.string.begin.underbar
+
+      push:
+        - meta_scope: string.quoted.single.underbar
+
+        - match: \\.
+          scope: constant.character.escape.underbar
+
+        - match: ''''
+          scope: punctuation.definition.string.end.underbar
+          pop: true

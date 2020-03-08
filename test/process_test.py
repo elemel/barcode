@@ -104,14 +104,14 @@ class ProcessTest(unittest.TestCase):
             .loop:
                 dup, ldl + .argc, sub, beq + .break; Break after last argument
                 dup, beq + .first; Skip space before first argument
-                " ", stdout, put; Write space to standard output
+                ' ', stdout, put; Write space to standard output
             .first:
                 dup, ldl + .argv, add, ldm; Load argument
                 stdout, cli + print; Print argument to standard output
                 adi + 1, bal + .loop; Next argument
             .break:
                 pop
-                "\n", stdout, put; Write newline to standard output
+                '\n', stdout, put; Write newline to standard output
                 0, ret + 2
 
             ; [stream, string] -> []
@@ -144,13 +144,13 @@ class ProcessTest(unittest.TestCase):
                 0, stl + .result; Initialize result
                 1; Positive sign
                 ldl + .stream, get; First character
-                dup, "-", sub, bne + .loop; If sign character
+                dup, adi - '-', bne + .loop; If sign character
                 pop; Discard sign character
                 neg; Negative sign
                 ldl + .stream, get; First character after sign
             .loop:
-                dup, "\n", sub, beq + .break; Break on newline
-                "0", sub; Character to digit
+                dup, adi - '\n', beq + .break; Break on newline
+                adi - '0'; Character to digit
                 ldl + .result, mli + 10; Multiply result by base
                 add, stl + .result; Add digit to result
                 ldl + .stream, get; Next character
@@ -178,13 +178,13 @@ class ProcessTest(unittest.TestCase):
                 0, stl + .result; Initialize result
                 1; Positive sign
                 ldl + .stream, get; First character
-                dup, "-", sub, bne + .loop; If sign character
+                dup, adi - '-', bne + .loop; If sign character
                 pop; Discard sign character
                 neg; Negative sign
                 ldl + .stream, get; First character after sign
             .loop:
-                dup, "\n", sub, beq + .break; Break on newline
-                "0", sub; Character to digit
+                dup, adi - '\n', beq + .break; Break on newline
+                adi - '0'; Character to digit
                 ldl + .result, mli + 10; Multiply result by base
                 add, stl + .result; Add digit to result
                 ldl + .stream, get; Next character
@@ -211,7 +211,7 @@ class ProcessTest(unittest.TestCase):
                 ent + 2, stl + .stream, stl + .value
                 1
                 ldl + .value, bge + .loop_1
-                "-", ldl + .stream, put
+                '-', ldl + .stream, put
                 ldl + .value, neg, stl + .value
             .loop_1:
                 mli + 10
@@ -220,11 +220,11 @@ class ProcessTest(unittest.TestCase):
                 fdi + 10
                 dup, beq + .break
                 dup, ldl + .value, swp, div, fdi + 1
-                "0", add, ldl + .stream, put
+                adi + '0', ldl + .stream, put
                 dup, ldl + .value, swp, mod, stl + .value
                 bal + .loop_2
             .break:
-                "\n", ldl + .stream, put
+                '\n', ldl + .stream, put
                 ret + 2
 
         '''))
@@ -243,7 +243,7 @@ class ProcessTest(unittest.TestCase):
                 ent + 2, stl + .stream, stl + .value
                 1
                 ldl + .value, bge + .loop_1
-                "-", ldl + .stream, put
+                '-', ldl + .stream, put
                 ldl + .value, neg, stl + .value
             .loop_1:
                 mli + 10
@@ -252,11 +252,11 @@ class ProcessTest(unittest.TestCase):
                 fdi + 10
                 dup, beq + .break
                 dup, ldl + .value, swp, div, fdi + 1
-                "0", add, ldl + .stream, put
+                adi + '0', ldl + .stream, put
                 dup, ldl + .value, swp, mod, stl + .value
                 bal + .loop_2
             .break:
-                "\n", ldl + .stream, put
+                '\n', ldl + .stream, put
                 ret + 2
 
         '''))

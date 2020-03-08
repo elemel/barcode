@@ -23,13 +23,16 @@ grammar = Grammar(r"""
         unary_expression (space? multiply_operator space? unary_expression)*
 
     unary_expression = (unary_operator space?)* operand
-    operand = number / identifier / ('(' space? expression space? ')')
+
+    operand =
+        number / character / identifier / ('(' space? expression space? ')')
 
     add_operator = '+' / '-'
     multiply_operator = '*' / '/'
     unary_operator = '+' / '-' / '*' / '/'
 
     number = ~'0|[1-9][0-9]*'
+    character = ~"'(\\[^\n]|[^'])*'"
     string = ~'"(\\[^\n]|[^"])*"'
     identifier = ~'[.A-Z_a-z][.0-9A-Z_a-z]*'
     space = ~'[ \t]+'
@@ -158,6 +161,10 @@ class Visitor(NodeVisitor):
     def visit_number(self, node, visited_children):
         return 'number', int(node.text)
 
+    def visit_character(self, node, visited_children):
+        # TODO: Handle escapes properly
+        return 'character', node.text[1:-1].replace('\\n', '\n')
+
     def visit_string(self, node, visited_children):
         # TODO: Handle escapes properly
         return 'string', node.text[1:-1].replace('\\n', '\n')
@@ -282,6 +289,8 @@ def assemble(assembly_code):
             return result
         elif expression[0] == 'number':
             return Q(expression[1])
+        elif expression[0] == 'character':
+            return Q(ord(expression[1]))
         elif expression[0] == 'identifier':
             return symbols.get(expression[1])
         else:

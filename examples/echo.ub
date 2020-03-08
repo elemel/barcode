@@ -9,14 +9,14 @@ main:
 .loop:
     dup, ldl + .argc, sub, beq + .break; Break after last argument
     dup, beq + .first; Skip space before first argument
-    " ", stdout, put; Write space to standard output
+    ' ', stdout, put; Write space to standard output
 .first:
     dup, ldl + .argv, add, ldm; Load argument
     stdout, cli + print; Print argument to standard output
     adi + 1, bal + .loop; Next argument
 .break:
     pop
-    "\n", stdout, put; Write newline to standard output
+    '\n', stdout, put; Write newline to standard output
     0, ret + 2
 
 ; [string, stream] -> []
