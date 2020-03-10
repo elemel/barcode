@@ -1,5 +1,6 @@
 from collections import defaultdict, deque
 from fractions import Fraction as Q
+from math import floor
 from sys import maxsize
 
 from underbar.memory import Memory
@@ -45,7 +46,7 @@ class Process:
         self.push(args_address) # argv
         self.push(Q(len(args))) # argc
 
-    def push(self, value):
+    def push(self, value: Q):
         self.memory[self.registers[DR]] = value
         self.registers[DR] += 1
 
@@ -53,7 +54,7 @@ class Process:
         self.registers[DR] -= 1
         return self.memory[self.registers[DR]]
 
-    def push_frame(self, value):
+    def push_frame(self, value: Q):
         self.memory[self.registers[CR]] = value
         self.registers[CR] += 1
 
@@ -85,7 +86,7 @@ class Process:
         stream = self.streams[handle]
 
         while stream:
-            char = chr(int(stream.popleft()))
+            char = chr(floor(stream.popleft()))
             chars.append(char)
 
             if char == '\n':
@@ -97,7 +98,7 @@ class Process:
         stream = self.streams[handle]
 
         for c in s:
-            stream.append(ord(c))
+            stream.append(Q(ord(c)))
 
     def close(self, handle=STDIN):
         stream = self.streams[handle]
