@@ -16,10 +16,10 @@ def next_rational(q: Q) -> Q:
 
 
 class Memory:
-    def __init__(self, size: int) -> None:
-        self.queues = {Q(0): deque(size * [Q(0)])}
+    def __init__(self) -> None:
+        self.queues = {}
         self.pool = []
-        self.next_key = Q(1, 2)
+        self.next_key = Q(0)
 
     def __getitem__(self, address: Q) -> Q:
         index, key = divmod(address, 1)
@@ -31,7 +31,7 @@ class Memory:
         assert index >= 0
         self.queues[key][index] = value
 
-    def new(self, size: int) -> Q:
+    def new(self, size: int = 0) -> Q:
         if self.pool:
             key = self.pool.pop()
         else:

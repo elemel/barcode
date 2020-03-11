@@ -21,14 +21,14 @@ STDOUT = Q(StandardStream.STDOUT.value)
 class Process:
     def __init__(self, machine_code: list = [], args: list = []) -> None:
         self.registers = len(Register) * [Q(0)]
-        self.memory = Memory(len(machine_code))
+        self.memory = Memory()
         self.streams = {handle.value: deque() for handle in StandardStream}
 
-        for i, q in enumerate(machine_code):
-            self.memory[Q(i)] = q
+        self.registers[IR] = self.memory.new()
+        self.registers[SR] = self.memory.new()
 
-        self.registers[IR] = Q(0)
-        self.registers[SR] = self.memory.new(0)
+        for i, q in enumerate(machine_code):
+            self.memory.put(Q(0), q)
 
         args_address = self.memory.new(len(args))
 

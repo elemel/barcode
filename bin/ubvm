@@ -19,7 +19,7 @@ def main():
     process.run()
 
     while True:
-        line = process.readLine()
+        line = process.read_line()
 
         if not line:
             break
