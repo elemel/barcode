@@ -2,5 +2,9 @@
 
 from underbar.stdio import StandardStream
 
-for handle in StandardStream:
-    print(f'{handle.name.lower()} = {handle.value}')
+for i, handle in enumerate(StandardStream):
+    if i:
+        print()
+
+    print(f'{handle.name.lower()}:')
+    print(f'    {handle.value}')
