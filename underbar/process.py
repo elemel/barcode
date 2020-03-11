@@ -43,22 +43,22 @@ class Process:
             self.memory[arg_address + len(arg)] = Q(0)
             self.memory[args_address + i] = arg_address
 
-        self.push(args_address) # argv
-        self.push(Q(len(args))) # argc
+        self.push_data(args_address) # argv
+        self.push_data(Q(len(args))) # argc
 
-    def push(self, value: Q):
+    def push_data(self, value: Q):
         self.memory[self.registers[DR]] = value
         self.registers[DR] += 1
 
-    def pop(self):
+    def pop_data(self):
         self.registers[DR] -= 1
         return self.memory[self.registers[DR]]
 
-    def push_frame(self, value: Q):
+    def push_call(self, value: Q):
         self.memory[self.registers[CR]] = value
         self.registers[CR] += 1
 
-    def pop_frame(self):
+    def pop_call(self):
         self.registers[CR] -= 1
         return self.memory[self.registers[CR]]
 

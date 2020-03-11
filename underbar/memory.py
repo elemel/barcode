@@ -1,3 +1,4 @@
+from collections import deque
 from fractions import Fraction as Q
 
 
@@ -16,7 +17,7 @@ def next_rational(q: Q) -> Q:
 
 class Memory:
     def __init__(self, size: int) -> None:
-        self.arrays = {Q(0): size * [Q(0)]}
+        self.arrays = {Q(0): deque(size * [Q(0)])}
         self.pool = []
         self.next_key = Q(1, 2)
 
@@ -37,7 +38,7 @@ class Memory:
             key = self.next_key
             self.next_key = next_rational(self.next_key)
 
-        self.arrays[key] = size * [Q(0)]
+        self.arrays[key] = deque(size * [Q(0)])
         return key
 
     def delete(self, key: Q) -> None:
