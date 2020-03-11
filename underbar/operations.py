@@ -3,7 +3,7 @@ from fractions import Fraction as Q
 
 from underbar.register import Register
 
-PR = Register.PR.value
+IR = Register.IR.value
 SR = Register.SR.value
 
 MNEMONIC_TO_OPCODE = {}
@@ -56,56 +56,56 @@ def add_integer(process, operand):
 
 @operation(Q(7, 10), 'bal')
 def branch_always(process, operand):
-    process.registers[PR] = Q(operand)
+    process.registers[IR] = Q(operand)
 
 
 @operation(Q(9, 10), 'beq')
 def branch_equal(process, operand):
     if not process.pop_data():
-        process.registers[PR] = Q(operand)
+        process.registers[IR] = Q(operand)
 
 
 @operation(Q(2, 5), 'bge')
 def branch_greater_equal(process, operand):
     if process.pop_data() >= 0:
-        process.registers[PR] = Q(operand)
+        process.registers[IR] = Q(operand)
 
 
 @operation(Q(5, 9), 'bgt')
 def branch_greater_than(process, operand):
     if process.pop_data() > 0:
-        process.registers[PR] = Q(operand)
+        process.registers[IR] = Q(operand)
 
 
 @operation(Q(1, 10), 'ble')
 def branch_less_equal(process, operand):
     if process.pop_data() <= 0:
-        process.registers[PR] = Q(operand)
+        process.registers[IR] = Q(operand)
 
 
 @operation(Q(3, 11), 'blt')
 def branch_less_than(process, operand):
     if process.pop_data() < 0:
-        process.registers[PR] = Q(operand)
+        process.registers[IR] = Q(operand)
 
 
 @operation(Q(3, 10), 'bne')
 def branch_not_equal(process, operand):
     if process.pop_data():
-        process.registers[PR] = Q(operand)
+        process.registers[IR] = Q(operand)
 
 
 @operation(Q(5, 11), 'cal')
 def call(process, operand):
     function = process.pop_data()
-    process.push_call(process.registers[PR])
-    process.registers[PR] = function
+    process.push_call(process.registers[IR])
+    process.registers[IR] = function
 
 
 @operation(Q(4, 11), 'cli')
 def call_integer(process, operand):
-    process.push_call(process.registers[PR])
-    process.registers[PR] = Q(operand)
+    process.push_call(process.registers[IR])
+    process.registers[IR] = Q(operand)
 
 
 @operation(Q(4, 9), 'del')
@@ -157,13 +157,13 @@ def get(process, operand):
     if not stream:
         # User can provide input and resume
         process.push_data(handle)
-        process.registers[PR] -= 1
+        process.registers[IR] -= 1
         raise BlockedError()
 
     if stream[0] is None:
         # End of file
         process.push_data(handle)
-        process.registers[PR] -= 1
+        process.registers[IR] -= 1
         raise ClosedError()
 
     value = stream.popleft()
@@ -172,7 +172,7 @@ def get(process, operand):
 
 @operation(Q(7, 9), 'hcf')
 def halt(process, operand):
-    process.registers[PR] -= 1
+    process.registers[IR] -= 1
     raise TerminatedError()
 
 
@@ -267,7 +267,7 @@ def return_(process, operand):
     for _ in range(operand):
         process.pop_call()
 
-    process.registers[PR] = process.pop_call()
+    process.registers[IR] = process.pop_call()
 
 
 @operation(Q(3, 4), 'siz')

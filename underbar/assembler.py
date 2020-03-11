@@ -182,9 +182,8 @@ class Visitor(NodeVisitor):
 def assemble(assembly_code):
     assembly_code += """
 
-        pr = 0
-        dr = 1
-        cr = 2
+        ir = 0
+        sr = 1
 
         add = 5/7; add
         adi = 3/7; add_integer

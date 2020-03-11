@@ -2,5 +2,5 @@ from enum import Enum
 
 
 class Register(Enum):
-    PR = 0 # Program
+    IR = 0 # Instruction
     SR = 1 # Stack

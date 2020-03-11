@@ -6,9 +6,6 @@ from underbar.process import Process
 from underbar.register import Register
 from underbar.stdio import StandardStream
 
-PR = Register.PR.value
-SR = Register.SR.value
-
 STDIN = Q(StandardStream.STDIN.value)
 STDOUT = Q(StandardStream.STDOUT.value)
 STDERR = Q(StandardStream.STDERR.value)
