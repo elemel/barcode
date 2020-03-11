@@ -1,7 +1,6 @@
 from collections import defaultdict, deque
 from fractions import Fraction as Q
 from math import floor
-from sys import maxsize
 
 from underbar.memory import Memory
 
@@ -14,17 +13,22 @@ from underbar.stdio import StandardStream
 IR = Register.IR.value
 SR = Register.SR.value
 
-STDIN = Q(StandardStream.STDIN.value)
-STDOUT = Q(StandardStream.STDOUT.value)
+STDIN = StandardStream.STDIN.value
+STDOUT = StandardStream.STDOUT.value
+STDERR = StandardStream.STDERR.value
 
 
 class Process:
     def __init__(self, machine_code: list = [], args: list = []) -> None:
         self.registers = len(Register) * [Q(0)]
         self.memory = Memory()
-        self.streams = {handle.value: deque() for handle in StandardStream}
 
         self.registers[IR] = self.memory.new()
+
+        self.memory.new() # stdin = 1/2
+        self.memory.new() # stdout = 1/3
+        self.memory.new() # stderr = 2/3
+
         self.registers[SR] = self.memory.new()
 
         for i, q in enumerate(machine_code):
@@ -74,10 +78,9 @@ class Process:
 
     def read_line(self, handle: Q = STDOUT) -> str:
         chars = []
-        stream = self.streams[handle]
 
-        while stream:
-            char = chr(floor(stream.popleft()))
+        while self.memory.size(handle):
+            char = chr(floor(self.memory.get(handle)))
             chars.append(char)
 
             if char == '\n':
@@ -86,11 +89,12 @@ class Process:
         return ''.join(chars)
 
     def write(self, s, handle: Q = STDIN) -> None:
-        stream = self.streams[handle]
-
         for c in s:
-            stream.append(Q(ord(c)))
+            self.memory.put(handle, Q(ord(c)))
 
     def close(self, handle: Q = STDIN) -> None:
-        stream = self.streams[handle]
-        stream.append(None)
+        self.memory.put(handle, Q(4)) # EOT
+
+    def print_queue(self, key):
+        for i in range(self.memory.size(key)):
+            print(i, self.memory[key + i])

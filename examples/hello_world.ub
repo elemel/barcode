@@ -4,7 +4,7 @@ loop:
     dup, ldm
     dup
     beq + exit
-    stdout, put
+    ldi + stdout, put
     adi + 1
     bal + loop
 

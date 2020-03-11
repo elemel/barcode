@@ -56,3 +56,6 @@ class Memory:
 
     def unget(self, key: Q, value: Q) -> None:
         self.queues[key].appendleft(value)
+
+    def size(self, key: Q) -> int:
+        return len(self.queues[key])

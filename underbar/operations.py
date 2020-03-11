@@ -14,10 +14,6 @@ class BlockedError(Exception):
     pass
 
 
-class ClosedError(Exception):
-    pass
-
-
 class TerminatedError(Exception):
     pass
 
@@ -152,22 +148,15 @@ def floor_divide_integer(process, operand):
 @operation(Q(2, 7))
 def get(process, operand):
     handle = process.pop_data()
-    stream = process.streams[handle]
 
-    if not stream:
+    try:
+        value = process.memory.get(handle)
+        process.push_data(value)
+    except:
         # User can provide input and resume
         process.push_data(handle)
         process.registers[IR] -= 1
         raise BlockedError()
-
-    if stream[0] is None:
-        # End of file
-        process.push_data(handle)
-        process.registers[IR] -= 1
-        raise ClosedError()
-
-    value = stream.popleft()
-    process.push_data(value)
 
 
 @operation(Q(7, 9), 'hcf')
@@ -182,9 +171,10 @@ def invert(process, operand):
     process.push_data(1 / value)
 
 
-@operation(Q(0), 'ldi')
+@operation(Q(8, 11), 'ldi')
 def load_integer(process, operand):
-    process.push_data(Q(operand))
+    value = process.memory[Q(operand)]
+    process.push_data(value)
 
 
 @operation(Q(1, 11), 'ldl')
@@ -253,13 +243,17 @@ def pop(process, operand):
     process.pop_data()
 
 
+@operation(Q(0), 'psh')
+def push(process, operand):
+    process.push_data(Q(operand))
+
+
 @operation(Q(1, 3))
 def put(process, operand):
     handle = process.pop_data()
     value = process.pop_data()
 
-    stream = process.streams[handle]
-    stream.append(value)
+    process.memory.put(handle, value)
 
 
 @operation(Q(8, 9), 'ret')
@@ -273,15 +267,7 @@ def return_(process, operand):
 @operation(Q(3, 4), 'siz')
 def size(process, operand):
     handle = process.pop_data()
-    stream = process.streams[handle]
-    size = len(stream)
-    
-    if size and stream[0] is None:
-        size -= 1
-
-        if not size:
-            size -= 1
-
+    size = process.memory.size(handle)
     process.push_data(Q(size))
 
 
