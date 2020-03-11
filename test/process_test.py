@@ -7,11 +7,11 @@ from underbar.register import Register
 from underbar.stdio import StandardStream
 
 PR = Register.PR.value
-DR = Register.DR.value
-CR = Register.CR.value
+SR = Register.SR.value
 
 STDIN = Q(StandardStream.STDIN.value)
 STDOUT = Q(StandardStream.STDOUT.value)
+STDERR = Q(StandardStream.STDERR.value)
 
 
 class ProcessTest(unittest.TestCase):
@@ -23,7 +23,7 @@ class ProcessTest(unittest.TestCase):
         '''))
 
         process.run()
-        self.assertEqual(process.peek(), Q(13))
+        self.assertEqual(process.pop_data(), Q(13))
 
     def test_call(self):
         process = Process(assemble('''
@@ -37,7 +37,7 @@ class ProcessTest(unittest.TestCase):
         '''))
 
         process.run()
-        self.assertEqual(process.peek(), Q(13))
+        self.assertEqual(process.pop_data(), Q(13))
 
     def test_hello_world(self):
         process = Process(assemble('''
@@ -61,7 +61,7 @@ class ProcessTest(unittest.TestCase):
         '''))
 
         process.run()
-        self.assertEqual(process.readLine(), 'Hello, World!\n')
+        self.assertEqual(process.read_line(), 'Hello, World!\n')
 
     def test_print(self):
         process = Process(assemble('''
@@ -88,8 +88,8 @@ class ProcessTest(unittest.TestCase):
         '''), args=['hello'])
 
         process.run()
-        self.assertEqual(process.peek(), Q(13))
-        self.assertEqual(process.readLine(), 'Hello, World!\n')
+        self.assertEqual(process.pop_data(), Q(13))
+        self.assertEqual(process.read_line(), 'Hello, World!\n')
 
     def test_echo(self):
         process = Process(assemble('''
@@ -130,7 +130,7 @@ class ProcessTest(unittest.TestCase):
         '''), args=['hello', 'world'])
 
         process.run()
-        self.assertEqual(process.readLine(), 'hello world\n')
+        self.assertEqual(process.read_line(), 'hello world\n')
 
     def test_get_integer_line(self):
         process = Process(assemble('''
@@ -164,7 +164,7 @@ class ProcessTest(unittest.TestCase):
 
         process.write('285793423\n')
         process.run()
-        self.assertEqual(process.peek(), 285793423)
+        self.assertEqual(process.pop_data(), 285793423)
 
     def test_get_integer_line_negative(self):
         process = Process(assemble('''
@@ -198,7 +198,7 @@ class ProcessTest(unittest.TestCase):
 
         process.write('-618584259\n')
         process.run()
-        self.assertEqual(process.peek(), -618584259)
+        self.assertEqual(process.pop_data(), -618584259)
 
     def test_put_integer_line(self):
         process = Process(assemble('''
@@ -230,7 +230,7 @@ class ProcessTest(unittest.TestCase):
         '''))
 
         process.run()
-        self.assertEqual(process.readLine(), '285793423\n')
+        self.assertEqual(process.read_line(), '285793423\n')
 
     def test_put_integer_line_negative(self):
         process = Process(assemble('''
@@ -262,7 +262,7 @@ class ProcessTest(unittest.TestCase):
         '''))
 
         process.run()
-        self.assertEqual(process.readLine(), '-618584259\n')
+        self.assertEqual(process.read_line(), '-618584259\n')
 
 
 if __name__ == '__main__':

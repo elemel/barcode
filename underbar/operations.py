@@ -4,8 +4,7 @@ from fractions import Fraction as Q
 from underbar.register import Register
 
 PR = Register.PR.value
-DR = Register.DR.value
-CR = Register.CR.value
+SR = Register.SR.value
 
 MNEMONIC_TO_OPCODE = {}
 OPCODE_TO_OPERATION = {}
@@ -140,7 +139,8 @@ def duplicate(process, operand):
 
 @operation(Q(1, 2), 'ent')
 def enter(process, operand):
-    process.registers[CR] += operand
+    for _ in range(operand):
+        process.push_call(Q(0))
 
 
 @operation(Q(4, 7), 'fdi')
@@ -151,20 +151,21 @@ def floor_divide_integer(process, operand):
 
 @operation(Q(2, 7))
 def get(process, operand):
-    handle = process.peek()
+    handle = process.pop_data()
     stream = process.streams[handle]
 
     if not stream:
         # User can provide input and resume
+        process.push_data(handle)
         process.registers[PR] -= 1
         raise BlockedError()
 
     if stream[0] is None:
         # End of file
+        process.push_data(handle)
         process.registers[PR] -= 1
         raise ClosedError()
 
-    process.pop_data()
     value = stream.popleft()
     process.push_data(value)
 
@@ -188,7 +189,7 @@ def load_integer(process, operand):
 
 @operation(Q(1, 11), 'ldl')
 def load_local(process, operand):
-    address = process.registers[CR] - 1 - operand
+    address = process.registers[SR] + operand
     value = process.memory[address]
     process.push_data(value)
 
@@ -249,7 +250,7 @@ def numerator(process, operand):
 
 @operation(Q(2, 11))
 def pop(process, operand):
-    process.registers[DR] -= 1
+    process.pop_data()
 
 
 @operation(Q(1, 3))
@@ -263,7 +264,9 @@ def put(process, operand):
 
 @operation(Q(8, 9), 'ret')
 def return_(process, operand):
-    process.registers[CR] -= operand
+    for _ in range(operand):
+        process.pop_call()
+
     process.registers[PR] = process.pop_call()
 
 
@@ -284,7 +287,7 @@ def size(process, operand):
 
 @operation(Q(7, 8), 'stl')
 def store_local(process, operand):
-    address = process.registers[CR] - 1 - operand
+    address = process.registers[SR] + operand
     value = process.pop_data()
     process.memory[address] = value
 

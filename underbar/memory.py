@@ -17,19 +17,19 @@ def next_rational(q: Q) -> Q:
 
 class Memory:
     def __init__(self, size: int) -> None:
-        self.arrays = {Q(0): deque(size * [Q(0)])}
+        self.queues = {Q(0): deque(size * [Q(0)])}
         self.pool = []
         self.next_key = Q(1, 2)
 
     def __getitem__(self, address: Q) -> Q:
         index, key = divmod(address, 1)
         assert index >= 0
-        return self.arrays[key][index]
+        return self.queues[key][index]
 
     def __setitem__(self, address: Q, value: Q) -> None:
         index, key = divmod(address, 1)
         assert index >= 0
-        self.arrays[key][index] = value
+        self.queues[key][index] = value
 
     def new(self, size: int) -> Q:
         if self.pool:
@@ -38,9 +38,21 @@ class Memory:
             key = self.next_key
             self.next_key = next_rational(self.next_key)
 
-        self.arrays[key] = deque(size * [Q(0)])
+        self.queues[key] = deque(size * [Q(0)])
         return key
 
     def delete(self, key: Q) -> None:
-        del self.arrays[key]
+        del self.queues[key]
         self.pool.append(key)
+
+    def put(self, key: Q, value: Q) -> None:
+        self.queues[key].append(value)
+
+    def unput(self, key: Q) -> Q:
+        return self.queues[key].pop()
+
+    def get(self, key: Q) -> Q:
+        return self.queues[key].popleft()
+
+    def unget(self, key: Q, value: Q) -> None:
+        self.queues[key].appendleft(value)
