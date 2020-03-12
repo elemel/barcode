@@ -19,7 +19,7 @@ STDERR = StandardStream.STDERR.value
 
 
 class Process:
-    def __init__(self, machine_code: list = [], args: list = []) -> None:
+    def __init__(self, machine_code: list = [], argv: list = []) -> None:
         self.registers = len(Register) * [Q(0)]
         self.memory = Memory()
 
@@ -34,19 +34,19 @@ class Process:
         for i, q in enumerate(machine_code):
             self.memory.put(Q(0), q)
 
-        args_address = self.memory.new(len(args))
+        argv_key = self.memory.new()
 
-        for i, arg in enumerate(args):
-            arg_address = self.memory.new(len(arg) + 1)
+        for arg in argv:
+            arg_key = self.memory.new()
 
-            for j, char in enumerate(arg):
-                self.memory[arg_address + j] = Q(ord(char))
+            for char in arg:
+                self.memory.put(arg_key, Q(ord(char)))
 
-            self.memory[arg_address + len(arg)] = Q(0)
-            self.memory[args_address + i] = arg_address
+            self.memory.put(arg_key, Q(0))
 
-        self.push_data(args_address) # argv
-        self.push_data(Q(len(args))) # argc
+            self.memory.put(argv_key, arg_key)
+
+        self.push_data(argv_key) # argv
 
     def push_data(self, value: Q) -> None:
         self.memory.put(self.registers[SR], value)

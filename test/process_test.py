@@ -82,7 +82,7 @@ class ProcessTest(unittest.TestCase):
             message:
                 "Hello, World!\n", 0
 
-        '''), args=['hello'])
+        '''))
 
         process.run()
         self.assertEqual(process.pop_data(), Q(13))
@@ -94,25 +94,23 @@ class ProcessTest(unittest.TestCase):
                 cli + main; Run main
                 hcf; Halt program
 
-            ; [argc, argv] -> [exit_code]
-            main: .argc = 0, .argv = 1
-                ent + 2, stl + .argc, stl + .argv
-                0
+            ; [argv] -> [exit_code]
+            main:
+                dup, siz, beq + .break; Break if empty
             .loop:
-                dup, ldl + .argc, sub, beq + .break; Break after last argument
-                dup, beq + .first; Skip space before first argument
-                ' ', ldi + stdout, put; Write space to standard output
-            .first:
-                dup, ldl + .argv, add, ldm; Load argument
+                dup, get; Next argument
                 ldi + stdout, cli + print; Print argument to standard output
-                adi + 1, bal + .loop; Next argument
+                dup, siz, beq + .break; Break if empty
+                ' ', ldi + stdout, put; Write space to standard output
+                bal + .loop
             .break:
                 pop
                 '\n', ldi + stdout, put; Write newline to standard output
-                0, ret + 2
+                0, ret
 
-            ; [stream, string] -> []
-            print: .stream = 0
+            ; [string, stream] -> []
+            print:
+            .stream = 0
                 ent + 1
                 stl + .stream
             .loop:
@@ -124,7 +122,7 @@ class ProcessTest(unittest.TestCase):
                 pop, pop
                 ret + 1
 
-        '''), args=['hello', 'world'])
+        '''), argv=['hello', 'world'])
 
         process.run()
         self.assertEqual(process.read_line(), 'hello world\n')

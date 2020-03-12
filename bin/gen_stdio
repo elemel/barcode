@@ -6,5 +6,4 @@ for i, handle in enumerate(StandardStream):
     if i:
         print()
 
-    print(f'{handle.name.lower()}:')
-    print(f'    {handle.value}')
+    print(f'{handle.name.lower()}: {handle.value}')

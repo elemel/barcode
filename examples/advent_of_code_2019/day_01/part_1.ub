@@ -3,7 +3,7 @@
 
 main:
 .sum = 0
-    ent + 1, pop, pop
+    ent + 1, pop
     0, stl + .sum; Initialize sum
 .loop:
     ldi + stdin, siz, adi - 1, beq + .break; Break on EOF

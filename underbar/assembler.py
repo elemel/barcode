@@ -226,14 +226,9 @@ def assemble(assembly_code):
         sub = 1/6; subtract
         swp = 6/7; swap
 
-        stdin:
-            1/2
-
-        stdout:
-            1/3
-
-        stderr:
-            2/3
+        stdin: 1/2
+        stdout: 1/3
+        stderr: 2/3
 
     """
 
