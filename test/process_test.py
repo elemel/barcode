@@ -39,21 +39,19 @@ class ProcessTest(unittest.TestCase):
     def test_hello_world(self):
         process = Process(assemble('''
 
+                pop
                 message
-
             loop:
-                dup, ldm
-                dup
-                beq + exit
-                ldi + stdout, put
-                adi + 1
-                bal + loop
-
-            exit:
+                dup, adi - message.end, beq + break
+                dup, ldm, ldi + stdout, put
+                adi + 1, bal + loop
+            break:
+                pop
                 0, hcf
 
             message:
-                "Hello, World!\n", 0
+                "Hello, World!\n"
+            .end:
 
         '''))
 
@@ -63,8 +61,8 @@ class ProcessTest(unittest.TestCase):
     def test_print(self):
         process = Process(assemble('''
 
-                13, message, ldi + stdout, cli + print
-                hcf
+                message, ldi + stdout, cli + print
+                13, hcf
 
             ; [stream, string] -> []
             print: .stream = 0
@@ -114,12 +112,12 @@ class ProcessTest(unittest.TestCase):
                 ent + 1
                 stl + .stream
             .loop:
-                dup, ldm; Load character
-                dup, beq + .break; Break on null character
+                dup, siz, beq + .break; Break if empty
+                dup, get; Next character
                 ldl + .stream, put; Write character to stream
-                adi + 1, bal + .loop; Next character
+                bal + .loop
             .break:
-                pop, pop
+                pop
                 ret + 1
 
         '''), argv=['hello', 'world'])

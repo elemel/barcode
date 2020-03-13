@@ -42,8 +42,6 @@ class Process:
             for char in arg:
                 self.memory.put(arg_key, Q(ord(char)))
 
-            self.memory.put(arg_key, Q(0))
-
             self.memory.put(argv_key, arg_key)
 
         self.push_data(argv_key) # argv
