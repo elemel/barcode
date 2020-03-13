@@ -2,7 +2,7 @@
 
 import sys
 
-from underbar.assembler import assemble
+from quest.assembler import assemble
 
 
 def main():

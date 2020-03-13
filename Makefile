@@ -1,13 +1,13 @@
-all: build/opcode.ub build/register.ub build/stdio.ub
+all: build/opcode.qs build/register.qs build/stdio.qs
 
-build/opcode.ub: build bin/gen_opcode underbar/operations.py
-	PYTHONPATH=. bin/gen_opcode > build/opcode.ub
+build/opcode.qs: build bin/gen_opcode quest/operations.py
+	PYTHONPATH=. bin/gen_opcode > build/opcode.qs
 
-build/register.ub: build bin/gen_register underbar/register.py
-	PYTHONPATH=. bin/gen_register > build/register.ub
+build/register.qs: build bin/gen_register quest/register.py
+	PYTHONPATH=. bin/gen_register > build/register.qs
 
-build/stdio.ub: build bin/gen_stdio underbar/stdio.py
-	PYTHONPATH=. bin/gen_stdio > build/stdio.ub
+build/stdio.qs: build bin/gen_stdio quest/stdio.py
+	PYTHONPATH=. bin/gen_stdio > build/stdio.qs
 
 build:
 	mkdir build

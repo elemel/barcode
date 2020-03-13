@@ -2,13 +2,13 @@ from collections import defaultdict, deque
 from fractions import Fraction as Q
 from math import floor
 
-from underbar.memory import Memory
+from quest.memory import Memory
 
-from underbar.operations import (
+from quest.operations import (
     BlockedError, TerminatedError, MNEMONIC_TO_OPCODE, OPCODE_TO_OPERATION)
 
-from underbar.register import Register
-from underbar.stdio import StandardStream
+from quest.register import Register
+from quest.stdio import StandardStream
 
 IR = Register.IR.value
 SR = Register.SR.value

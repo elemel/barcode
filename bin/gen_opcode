@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from underbar.operations import MNEMONIC_TO_OPCODE, OPCODE_TO_OPERATION
+from quest.operations import MNEMONIC_TO_OPCODE, OPCODE_TO_OPERATION
 
 for mnemonic, opcode in sorted(MNEMONIC_TO_OPCODE.items()):
     operation = OPCODE_TO_OPERATION[opcode]

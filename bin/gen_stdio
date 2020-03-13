@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from underbar.stdio import StandardStream
+from quest.stdio import StandardStream
 
 for i, handle in enumerate(StandardStream):
     if i:

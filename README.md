@@ -1,4 +1,4 @@
-# underbar
+# quest
 
 Rational stack machine
 
@@ -8,7 +8,7 @@ Rational stack machine
 Command line:
 
 ```sh
-PYTHONPATH=. bin/ubvm examples/advent_of_code_2019/day_01/part_1.ub < examples/advent_of_code_2019/day_01/input.txt
+PYTHONPATH=. bin/quest examples/advent_of_code_2019/day_01/part_1.qs < examples/advent_of_code_2019/day_01/input.txt
 ```
 
 Output:

@@ -1,10 +1,10 @@
 from fractions import Fraction as Q
 import unittest
 
-from underbar.assembler import assemble
-from underbar.process import Process
-from underbar.register import Register
-from underbar.stdio import StandardStream
+from quest.assembler import assemble
+from quest.process import Process
+from quest.register import Register
+from quest.stdio import StandardStream
 
 STDIN = StandardStream.STDIN.value
 STDOUT = StandardStream.STDOUT.value

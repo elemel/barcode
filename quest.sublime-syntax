@@ -1,0 +1,69 @@
+%YAML 1.2
+---
+name: Quest
+file_extensions: [qs]
+scope: source.quest
+
+contexts:
+  main:
+    - match: \b(add|adi|bal|beq|bge|bgt|ble|blt|bne|cal|cli|del|den|div|dup|ent|fdi|get|hcf|inv|ldi|ldl|ldm|ldr|mli|mod|mul|neg|new|num|pop|psh|put|ret|siz|stl|stm|str|sub|swp)\b
+      scope: keyword.other.quest
+
+    - match: \b(ir|sr)\b
+      scope: variable.language.quest
+
+    - match: \b(stderr|stdin|stdout)\b
+      scope: variable.language.quest
+
+    - match: '(\b[.A-Z_a-z][.0-9A-Z_a-z]*\b)\s*(:)'
+      captures:
+        1: entity.name.label.quest
+        2: punctuation.separator.quest
+
+    - match: '(\b[.A-Z_a-z][.0-9A-Z_a-z]*\b)\s*(=)'
+      captures:
+        1: variable.other.constant.quest
+        2: punctuation.separator.quest
+
+    - match: \b[.A-Z_a-z][.0-9A-Z_a-z]*\b
+      scope: variable.other.quest
+
+    - match: \b0|[1-9][0-9]*\b
+      scope: constant.numeric.integer.decimal.quest
+
+    - match: '[-+/*]'
+      scope: keyword.operator.arithmetic.quest
+
+    - match: ','
+      scope: punctuation.quest
+
+    - match: (;|#)([^\n]*)(\n|$)
+      captures:
+        1: punctuation.separator.quest
+        2: comment.quest
+
+    - match: '"'
+      scope: punctuation.definition.string.begin.quest
+
+      push:
+        - meta_scope: string.quoted.double.quest
+
+        - match: \\.
+          scope: constant.character.escape.quest
+
+        - match: '"'
+          scope: punctuation.definition.string.end.quest
+          pop: true
+
+    - match: ''''
+      scope: punctuation.definition.string.begin.quest
+
+      push:
+        - meta_scope: string.quoted.single.quest
+
+        - match: \\.
+          scope: constant.character.escape.quest
+
+        - match: ''''
+          scope: punctuation.definition.string.end.quest
+          pop: true

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from underbar.register import Register
+from quest.register import Register
 
 for register in Register:
     print(f'{register.name.lower()} = {register.value}')

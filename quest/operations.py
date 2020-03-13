@@ -1,7 +1,7 @@
 from enum import Enum
 from fractions import Fraction as Q
 
-from underbar.register import Register
+from quest.register import Register
 
 IR = Register.IR.value
 SR = Register.SR.value
