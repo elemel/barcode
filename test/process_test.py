@@ -39,14 +39,14 @@ class ProcessTest(unittest.TestCase):
     def test_hello_world(self):
         process = Process(assemble('''
 
-                pop
+                dis
                 message
             loop:
                 dup, adi - message.end, beq + break
                 dup, ldm, lds + stdout, put
                 adi + 1, bal + loop
             break:
-                pop
+                dis
                 0, hcf
 
             message:
@@ -74,7 +74,7 @@ class ProcessTest(unittest.TestCase):
                 ldl + .stream, put; Write character to stream
                 adi + 1, bal + .loop; Next character
             .break:
-                pop, pop
+                dis, dis
                 ret + 1
 
             message:
@@ -102,7 +102,7 @@ class ProcessTest(unittest.TestCase):
                 ' ', lds + stdout, put; Write space to standard output
                 bal + .loop
             .break:
-                pop
+                dis
                 '\n', lds + stdout, put; Write newline to standard output
                 0, ret
 
@@ -117,7 +117,7 @@ class ProcessTest(unittest.TestCase):
                 ldl + .stream, put; Write character to stream
                 bal + .loop
             .break:
-                pop
+                dis
                 ret + 1
 
         '''), argv=['hello', 'world'])
@@ -138,7 +138,7 @@ class ProcessTest(unittest.TestCase):
                 1; Positive sign
                 ldl + .stream, get; First character
                 dup, adi - '-', bne + .loop; If sign character
-                pop; Discard sign character
+                dis; Discard sign character
                 neg; Negative sign
                 ldl + .stream, get; First character after sign
             .loop:
@@ -149,7 +149,7 @@ class ProcessTest(unittest.TestCase):
                 ldl + .stream, get; Next character
                 bal + .loop
             .break:
-                pop; Discard newline
+                dis; Discard newline
                 ldl + .result, mul, stl + .result; Apply sign
                 ldl + .result, ret + 2
 
@@ -172,7 +172,7 @@ class ProcessTest(unittest.TestCase):
                 1; Positive sign
                 ldl + .stream, get; First character
                 dup, adi - '-', bne + .loop; If sign character
-                pop; Discard sign character
+                dis; Discard sign character
                 neg; Negative sign
                 ldl + .stream, get; First character after sign
             .loop:
@@ -183,7 +183,7 @@ class ProcessTest(unittest.TestCase):
                 ldl + .stream, get; Next character
                 bal + .loop
             .break:
-                pop; Discard newline
+                dis; Discard newline
                 ldl + .result, mul, stl + .result; Apply sign
                 ldl + .result, ret + 2
 

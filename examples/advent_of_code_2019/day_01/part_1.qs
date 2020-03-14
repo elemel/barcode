@@ -3,7 +3,7 @@
 
 main:
 .sum = 0
-    ent + 1, pop
+    ent + 1, dis
     0, stl + .sum; Initialize sum
 .loop:
     lds + stdin, siz, adi - 1, beq + .break; Break on EOF
@@ -23,7 +23,7 @@ get_integer_line:
     1; Positive sign
     ldl + .stream, get; First character
     dup, adi - '-', bne + .loop; If sign character
-    pop; Discard sign character
+    dis; Discard sign character
     neg; Negative sign
     ldl + .stream, get; First character after sign
 .loop:
@@ -34,7 +34,7 @@ get_integer_line:
     ldl + .stream, get; Next character
     bal + .loop
 .break:
-    pop; Discard newline
+    dis; Discard newline
     ldl + .result, mul, stl + .result; Apply sign
     ldl + .result, ret + 2
 

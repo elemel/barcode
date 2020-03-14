@@ -199,6 +199,7 @@ def assemble(assembly_code):
         cls = 4/11; call_static
         del = 4/9; delete
         den = 6/11; denominator
+        dis = 2/11; discard
         div = 1/9; divide
         dup = 1/5; duplicate
         ent = 1/2; enter
@@ -217,7 +218,6 @@ def assemble(assembly_code):
         neg = 3/8; negate
         new = 2/3; new
         num = 4/5; numerator
-        pop = 2/11; pop
         put = 1/3; put
         ret = 8/9; return_
         siz = 3/4; size

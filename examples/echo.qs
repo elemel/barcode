@@ -11,7 +11,7 @@ main:
     ' ', lds + stdout, put; Write space to standard output
     bal + .loop
 .break:
-    pop
+    dis
     '\n', lds + stdout, put; Write newline to standard output
     0, ret
 
@@ -26,5 +26,5 @@ print:
     ldl + .stream, put; Write character to stream
     bal + .loop
 .break:
-    pop
+    dis
     ret + 1

@@ -1,11 +1,11 @@
-    pop
+    dis
     message
 loop:
     dup, adi - message.end, beq + break
     dup, ldm, lds + stdout, put
     adi + 1, bal + loop
 break:
-    pop
+    dis
     0, hcf
 
 message:

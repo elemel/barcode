@@ -239,8 +239,8 @@ def numerator(process, operand):
     process.push_data(value)
 
 
-@operation(Q(2, 11))
-def pop(process, operand):
+@operation(Q(2, 11), 'dis')
+def discard(process, operand):
     process.pop_data()
 
 
