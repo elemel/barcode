@@ -1,14 +1,11 @@
+    pop
     message
-
 loop:
-    dup, ldm
-    dup
-    beq + exit
-    ldi + stdout, put
-    adi + 1
-    bal + loop
-
-exit:
+    dup, adi - message.end, beq + break
+    dup, ldm, lds + stdout, put
+    adi + 1, bal + loop
+break:
+    pop
     0, hcf
 
 message:

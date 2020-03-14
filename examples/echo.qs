@@ -6,13 +6,13 @@ main:
     dup, siz, beq + .break; Break if empty
 .loop:
     dup, get; Next argument
-    ldi + stdout, cli + print; Print argument to standard output
+    lds + stdout, cli + print; Print argument to standard output
     dup, siz, beq + .break; Break if empty
-    ' ', ldi + stdout, put; Write space to standard output
+    ' ', lds + stdout, put; Write space to standard output
     bal + .loop
 .break:
     pop
-    '\n', ldi + stdout, put; Write newline to standard output
+    '\n', lds + stdout, put; Write newline to standard output
     0, ret
 
 ; [string, stream] -> []

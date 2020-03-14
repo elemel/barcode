@@ -206,10 +206,10 @@ def assemble(assembly_code):
         get = 2/7; get
         hcf = 7/9; halt
         inv = 5/6; invert
-        ldi = 8/11; load_integer
         ldl = 1/11; load_local
         ldm = 1/7; load_memory
         ldr = 7/11; load_register
+        lds = 8/11; load_static
         mli = 1/4; multiply_integer
         mod = 2/9; modulo
         mul = 1/8; multiply

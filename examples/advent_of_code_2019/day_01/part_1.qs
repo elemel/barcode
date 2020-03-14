@@ -6,13 +6,13 @@ main:
     ent + 1, pop
     0, stl + .sum; Initialize sum
 .loop:
-    ldi + stdin, siz, adi - 1, beq + .break; Break on EOF
-    ldi + stdin, cli + get_integer_line
+    lds + stdin, siz, adi - 1, beq + .break; Break on EOF
+    lds + stdin, cli + get_integer_line
     fdi + 3, adi - 2
     ldl + .sum, add, stl + .sum
     bal + .loop
 .break:
-    ldl + .sum, ldi + stdout, cli + put_integer_line
+    ldl + .sum, lds + stdout, cli + put_integer_line
     0, ret + 1
 
 ; [stream] -> [result]

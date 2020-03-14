@@ -172,8 +172,8 @@ def invert(process, operand):
     process.push_data(1 / value)
 
 
-@operation(Q(8, 11), 'ldi')
-def load_integer(process, operand):
+@operation(Q(8, 11), 'lds')
+def load_static(process, operand):
     value = process.memory[Q(operand)]
     process.push_data(value)
 
