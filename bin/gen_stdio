@@ -3,7 +3,4 @@
 from quest.stdio import StandardStream
 
 for i, handle in enumerate(StandardStream):
-    if i:
-        print()
-
     print(f'{handle.name.lower()}: {handle.value}')

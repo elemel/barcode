@@ -11,7 +11,8 @@ from quest.register import Register
 from quest.stdio import StandardStream
 
 IR = Register.IR.value
-SR = Register.SR.value
+DR = Register.DR.value
+CR = Register.CR.value
 
 STDIN = StandardStream.STDIN.value
 STDOUT = StandardStream.STDOUT.value
@@ -24,12 +25,12 @@ class Process:
         self.memory = Memory()
 
         self.registers[IR] = self.memory.new()
+        self.registers[DR] = self.memory.new()
+        self.registers[CR] = self.memory.new()
 
-        self.memory.new() # stdin = 1/2
-        self.memory.new() # stdout = 1/3
-        self.memory.new() # stderr = 2/3
-
-        self.registers[SR] = self.memory.new()
+        self.memory.new() # stdin = 2/3
+        self.memory.new() # stdout = 1/4
+        self.memory.new() # stderr = 3/4
 
         for i, q in enumerate(machine_code):
             self.memory.put(Q(0), q)
@@ -47,16 +48,16 @@ class Process:
         self.push_data(argv_key) # argv
 
     def push_data(self, value: Q) -> None:
-        self.memory.put(self.registers[SR], value)
+        self.memory.put(self.registers[DR], value)
 
     def pop_data(self) -> Q:
-        return self.memory.unput(self.registers[SR])
+        return self.memory.unput(self.registers[DR])
 
     def push_call(self, value: Q) -> None:
-        self.memory.unget(self.registers[SR], value)
+        self.memory.unget(self.registers[CR], value)
 
     def pop_call(self) -> Q:
-        return self.memory.get(self.registers[SR])
+        return self.memory.get(self.registers[CR])
 
     def step(self) -> None:
         opcode = self.memory[self.registers[IR]]

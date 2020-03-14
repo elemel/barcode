@@ -4,7 +4,8 @@ from fractions import Fraction as Q
 from quest.register import Register
 
 IR = Register.IR.value
-SR = Register.SR.value
+DR = Register.DR.value
+CR = Register.CR.value
 
 MNEMONIC_TO_OPCODE = {}
 OPCODE_TO_OPERATION = {}
@@ -179,7 +180,7 @@ def load_integer(process, operand):
 
 @operation(Q(1, 11), 'ldl')
 def load_local(process, operand):
-    address = process.registers[SR] + operand
+    address = process.registers[CR] + operand
     value = process.memory[address]
     process.push_data(value)
 
@@ -273,7 +274,7 @@ def size(process, operand):
 
 @operation(Q(7, 8), 'stl')
 def store_local(process, operand):
-    address = process.registers[SR] + operand
+    address = process.registers[CR] + operand
     value = process.pop_data()
     process.memory[address] = value
 

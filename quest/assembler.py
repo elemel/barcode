@@ -183,7 +183,8 @@ def assemble(assembly_code):
     assembly_code += """
 
         ir = 0
-        sr = 1
+        dr = 1
+        cr = 2
 
         add = 5/7; add
         adi = 3/7; add_integer
@@ -226,9 +227,9 @@ def assemble(assembly_code):
         sub = 1/6; subtract
         swp = 6/7; swap
 
-        stdin: 1/2
-        stdout: 1/3
-        stderr: 2/3
+        stdin: 2/3
+        stdout: 1/4
+        stderr: 3/4
 
     """
 

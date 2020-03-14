@@ -9,7 +9,7 @@ contexts:
     - match: \b(add|adi|bal|beq|bge|bgt|ble|blt|bne|cal|cli|del|den|div|dup|ent|fdi|get|hcf|inv|ldi|ldl|ldm|ldr|mli|mod|mul|neg|new|num|pop|psh|put|ret|siz|stl|stm|str|sub|swp)\b
       scope: keyword.other.quest
 
-    - match: \b(ir|sr)\b
+    - match: \b(cr|dr|ir)\b
       scope: variable.language.quest
 
     - match: \b(stderr|stdin|stdout)\b
