@@ -99,8 +99,8 @@ def call(process, operand):
     process.registers[IR] = function
 
 
-@operation(Q(4, 11), 'cli')
-def call_integer(process, operand):
+@operation(Q(4, 11), 'cls')
+def call_static(process, operand):
     process.push_call(process.registers[IR])
     process.registers[IR] = Q(operand)
 

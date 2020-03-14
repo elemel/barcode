@@ -196,7 +196,7 @@ def assemble(assembly_code):
         blt = 3/11; branch_less_than
         bne = 3/10; branch_not_equal
         cal = 5/11; call
-        cli = 4/11; call_integer
+        cls = 4/11; call_static
         del = 4/9; delete
         den = 6/11; denominator
         div = 1/9; divide

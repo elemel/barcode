@@ -1,4 +1,4 @@
-    cli + main; Run main
+    cls + main; Run main
     hcf; Halt program
 
 ; [argv] -> [exit_code]
@@ -6,7 +6,7 @@ main:
     dup, siz, beq + .break; Break if empty
 .loop:
     dup, get; Next argument
-    lds + stdout, cli + print; Print argument to standard output
+    lds + stdout, cls + print; Print argument to standard output
     dup, siz, beq + .break; Break if empty
     ' ', lds + stdout, put; Write space to standard output
     bal + .loop
