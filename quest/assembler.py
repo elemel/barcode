@@ -206,6 +206,7 @@ def assemble(assembly_code):
         get = 2/7; get
         hcf = 7/9; halt
         inv = 5/6; invert
+        ldi = 0; load_integer
         ldl = 1/11; load_local
         ldm = 1/7; load_memory
         ldr = 7/11; load_register
@@ -217,7 +218,6 @@ def assemble(assembly_code):
         new = 2/3; new
         num = 4/5; numerator
         pop = 2/11; pop
-        psh = 0; push
         put = 1/3; put
         ret = 8/9; return_
         siz = 3/4; size

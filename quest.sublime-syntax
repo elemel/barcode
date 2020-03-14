@@ -6,7 +6,7 @@ scope: source.quest
 
 contexts:
   main:
-    - match: \b(add|adi|bal|beq|bge|bgt|ble|blt|bne|cal|cls|del|den|div|dup|ent|fdi|get|hcf|inv|ldl|ldm|ldr|lds|mli|mod|mul|neg|new|num|pop|psh|put|ret|siz|stl|stm|str|sub|swp)\b
+    - match: \b(add|adi|bal|beq|bge|bgt|ble|blt|bne|cal|cls|del|den|div|dup|ent|fdi|get|hcf|inv|ldi|ldl|ldm|ldr|lds|mli|mod|mul|neg|new|num|pop|put|ret|siz|stl|stm|str|sub|swp)\b
       scope: keyword.other.quest
 
     - match: \b(cr|dr|ir)\b

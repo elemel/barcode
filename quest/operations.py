@@ -244,8 +244,8 @@ def pop(process, operand):
     process.pop_data()
 
 
-@operation(Q(0), 'psh')
-def push(process, operand):
+@operation(Q(0), 'ldi')
+def load_integer(process, operand):
     process.push_data(Q(operand))
 
 
