@@ -22,12 +22,10 @@ class Memory:
 
     def __getitem__(self, address: Q) -> Q:
         offset, base = divmod(address, 1)
-        assert offset >= 0
         return self.stacks[base][offset]
 
     def __setitem__(self, address: Q, value: Q) -> None:
         offset, base = divmod(address, 1)
-        assert offset >= 0
         self.stacks[base][offset] = value
 
     def new(self, size: int = 0) -> Q:
