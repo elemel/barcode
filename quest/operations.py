@@ -166,9 +166,9 @@ def load_static(process, operand):
 
 @operation(Q(1, 11), 'ldl')
 def load_local(process, operand):
-    key = process.registers[CR]
-    size = process.memory.size(key)
-    address = key + size - 1 - operand
+    base = process.registers[CR]
+    size = process.memory.size(base)
+    address = base + size - 1 - operand
     value = process.memory[address]
     process.push_data(value)
 
@@ -275,9 +275,9 @@ def size(process, operand):
 
 @operation(Q(7, 8), 'stl')
 def store_local(process, operand):
-    key = process.registers[CR]
-    size = process.memory.size(key)
-    address = key + size - 1 - operand
+    base = process.registers[CR]
+    size = process.memory.size(base)
+    address = base + size - 1 - operand
     value = process.pop_data()
     process.memory[address] = value
 

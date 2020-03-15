@@ -18,37 +18,37 @@ class Memory:
     def __init__(self) -> None:
         self.stacks = {}
         self.pool = []
-        self.next_key = Q(0)
+        self.next_base = Q(0)
 
     def __getitem__(self, address: Q) -> Q:
-        index, key = divmod(address, 1)
-        assert index >= 0
-        return self.stacks[key][index]
+        offset, base = divmod(address, 1)
+        assert offset >= 0
+        return self.stacks[base][offset]
 
     def __setitem__(self, address: Q, value: Q) -> None:
-        index, key = divmod(address, 1)
-        assert index >= 0
-        self.stacks[key][index] = value
+        offset, base = divmod(address, 1)
+        assert offset >= 0
+        self.stacks[base][offset] = value
 
     def new(self, size: int = 0) -> Q:
         if self.pool:
-            key = self.pool.pop()
+            base = self.pool.pop()
         else:
-            key = self.next_key
-            self.next_key = next_rational(self.next_key)
+            base = self.next_base
+            self.next_base = next_rational(self.next_base)
 
-        self.stacks[key] = size * [Q(0)]
-        return key
+        self.stacks[base] = size * [Q(0)]
+        return base
 
-    def delete(self, key: Q) -> None:
-        del self.stacks[key]
-        self.pool.append(key)
+    def delete(self, base: Q) -> None:
+        del self.stacks[base]
+        self.pool.append(base)
 
-    def push(self, key: Q, value: Q) -> None:
-        self.stacks[key].append(value)
+    def push(self, base: Q, value: Q) -> None:
+        self.stacks[base].append(value)
 
-    def pop(self, key: Q) -> Q:
-        return self.stacks[key].pop()
+    def pop(self, base: Q) -> Q:
+        return self.stacks[base].pop()
 
-    def size(self, key: Q) -> int:
-        return len(self.stacks[key])
+    def size(self, base: Q) -> int:
+        return len(self.stacks[base])

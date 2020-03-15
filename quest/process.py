@@ -35,17 +35,17 @@ class Process:
         for i, q in enumerate(machine_code):
             self.memory.push(Q(0), q)
 
-        argv_key = self.memory.new()
+        argv_base = self.memory.new()
 
         for arg in argv:
-            arg_key = self.memory.new()
+            arg_base = self.memory.new()
 
             for char in arg:
-                self.memory.push(arg_key, Q(ord(char)))
+                self.memory.push(arg_base, Q(ord(char)))
 
-            self.memory.push(argv_key, arg_key)
+            self.memory.push(argv_base, arg_base)
 
-        self.push_data(argv_key) # argv
+        self.push_data(argv_base)
 
     def push_data(self, value: Q) -> None:
         self.memory.push(self.registers[DR], value)
@@ -97,6 +97,7 @@ class Process:
         while values:
             self.memory.push(handle, values.pop())
 
-    def print_queue(self, key):
-        for i in range(self.memory.size(key)):
-            print(i, self.memory[key + i])
+    def print_stack(self, base):
+        for offset in range(self.memory.size(base)):
+            address = base + offset
+            print(f'{address}: {self.memory[address]}')
