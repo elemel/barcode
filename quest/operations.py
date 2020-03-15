@@ -215,8 +215,7 @@ def negate(process, operand):
 
 @operation(Q(2, 3))
 def new(process, operand):
-    size = process.pop_data()
-    array = process.memory.new(size)
+    array = process.memory.new(operand)
     process.push_data(array)
 
 

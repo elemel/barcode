@@ -1,4 +1,3 @@
-from collections import deque
 from fractions import Fraction as Q
 
 
@@ -17,19 +16,19 @@ def next_rational(q: Q) -> Q:
 
 class Memory:
     def __init__(self) -> None:
-        self.queues = {}
+        self.stacks = {}
         self.pool = []
         self.next_key = Q(0)
 
     def __getitem__(self, address: Q) -> Q:
         index, key = divmod(address, 1)
         assert index >= 0
-        return self.queues[key][index]
+        return self.stacks[key][index]
 
     def __setitem__(self, address: Q, value: Q) -> None:
         index, key = divmod(address, 1)
         assert index >= 0
-        self.queues[key][index] = value
+        self.stacks[key][index] = value
 
     def new(self, size: int = 0) -> Q:
         if self.pool:
@@ -38,18 +37,18 @@ class Memory:
             key = self.next_key
             self.next_key = next_rational(self.next_key)
 
-        self.queues[key] = deque(size * [Q(0)])
+        self.stacks[key] = size * [Q(0)]
         return key
 
     def delete(self, key: Q) -> None:
-        del self.queues[key]
+        del self.stacks[key]
         self.pool.append(key)
 
     def push(self, key: Q, value: Q) -> None:
-        self.queues[key].append(value)
+        self.stacks[key].append(value)
 
     def pop(self, key: Q) -> Q:
-        return self.queues[key].pop()
+        return self.stacks[key].pop()
 
     def size(self, key: Q) -> int:
-        return len(self.queues[key])
+        return len(self.stacks[key])
