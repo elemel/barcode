@@ -128,9 +128,8 @@ def divide(process, operand):
 
 @operation(Q(1, 5), 'dup')
 def duplicate(process, operand):
-    value = process.pop_data()
-
-    process.push_data(value)
+    address = process.registers[DR] - 1 - operand
+    value = process.memory[address]
     process.push_data(value)
 
 
