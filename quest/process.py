@@ -32,8 +32,8 @@ class Process:
         self.memory.new() # stdout = 1/4
         self.memory.new() # stderr = 3/4
 
-        for i, q in enumerate(machine_code):
-            self.memory.push(Q(0), q)
+        for instruction in machine_code:
+            self.memory.push(Q(0), instruction)
 
         argv_base = self.memory.new()
 
@@ -60,9 +60,9 @@ class Process:
         return self.memory.pop(self.registers[CR])
 
     def step(self) -> None:
-        opcode = self.memory[self.registers[IR]]
+        instruction = self.memory[self.registers[IR]]
         self.registers[IR] += 1
-        operand, opcode = divmod(opcode, 1)
+        operand, opcode = divmod(instruction, 1)
         operation = OPCODE_TO_OPERATION[opcode]
         operation(self, operand)
 
