@@ -54,10 +54,10 @@ class Process:
         return self.memory.unput(self.registers[DR])
 
     def push_call(self, value: Q) -> None:
-        self.memory.unget(self.registers[CR], value)
+        self.memory.put(self.registers[CR], value)
 
     def pop_call(self) -> Q:
-        return self.memory.get(self.registers[CR])
+        return self.memory.unput(self.registers[CR])
 
     def step(self) -> None:
         opcode = self.memory[self.registers[IR]]
