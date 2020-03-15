@@ -33,7 +33,7 @@ class Process:
         self.memory.new() # stderr = 3/4
 
         for i, q in enumerate(machine_code):
-            self.memory.put(Q(0), q)
+            self.memory.push(Q(0), q)
 
         argv_key = self.memory.new()
 
@@ -41,23 +41,23 @@ class Process:
             arg_key = self.memory.new()
 
             for char in arg:
-                self.memory.put(arg_key, Q(ord(char)))
+                self.memory.push(arg_key, Q(ord(char)))
 
-            self.memory.put(argv_key, arg_key)
+            self.memory.push(argv_key, arg_key)
 
         self.push_data(argv_key) # argv
 
     def push_data(self, value: Q) -> None:
-        self.memory.put(self.registers[DR], value)
+        self.memory.push(self.registers[DR], value)
 
     def pop_data(self) -> Q:
-        return self.memory.unput(self.registers[DR])
+        return self.memory.pop(self.registers[DR])
 
     def push_call(self, value: Q) -> None:
-        self.memory.put(self.registers[CR], value)
+        self.memory.push(self.registers[CR], value)
 
     def pop_call(self) -> Q:
-        return self.memory.unput(self.registers[CR])
+        return self.memory.pop(self.registers[CR])
 
     def step(self) -> None:
         opcode = self.memory[self.registers[IR]]
@@ -75,24 +75,27 @@ class Process:
         except TerminatedError:
             return False
 
-    def read_line(self, handle: Q = STDOUT) -> str:
+    def read(self, handle: Q = STDOUT) -> str:
         chars = []
 
-        while self.memory.size(handle):
-            char = chr(floor(self.memory.get(handle)))
+        for _ in range(self.memory.size(handle)):
+            char = chr(floor(self.memory.pop(handle)))
             chars.append(char)
 
-            if char == '\n':
-                break
-
+        chars.reverse()
         return ''.join(chars)
 
     def write(self, s, handle: Q = STDIN) -> None:
-        for c in s:
-            self.memory.put(handle, Q(ord(c)))
+        values = []
 
-    def close(self, handle: Q = STDIN) -> None:
-        self.memory.put(handle, Q(4)) # EOT
+        for _ in range(self.memory.size(handle)):
+            values.append(self.memory.pop(handle))
+
+        for c in s:
+            values.append(Q(ord(c)))
+
+        while values:
+            self.memory.push(handle, values.pop())
 
     def print_queue(self, key):
         for i in range(self.memory.size(key)):

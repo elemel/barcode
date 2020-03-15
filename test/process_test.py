@@ -43,7 +43,7 @@ class ProcessTest(unittest.TestCase):
                 message
             loop:
                 dup, adi - message.end, beq + break
-                dup, ldm, lds + stdout, put
+                dup, ldm, lds + stdout, psh
                 adi + 1, bal + loop
             break:
                 dis
@@ -56,7 +56,7 @@ class ProcessTest(unittest.TestCase):
         '''))
 
         process.run()
-        self.assertEqual(process.read_line(), 'Hello, World!\n')
+        self.assertEqual(process.read(), 'Hello, World!\n')
 
     def test_print(self):
         process = Process(assemble('''
@@ -71,7 +71,7 @@ class ProcessTest(unittest.TestCase):
             .loop:
                 dup, ldm; Load character
                 dup, beq + .break; Break on null character
-                ldl + .stream, put; Write character to stream
+                ldl + .stream, psh; Write character to stream
                 adi + 1, bal + .loop; Next character
             .break:
                 dis, dis
@@ -84,7 +84,7 @@ class ProcessTest(unittest.TestCase):
 
         process.run()
         self.assertEqual(process.pop_data(), Q(13))
-        self.assertEqual(process.read_line(), 'Hello, World!\n')
+        self.assertEqual(process.read(), 'Hello, World!\n')
 
     def test_echo(self):
         process = Process(assemble('''
@@ -94,36 +94,40 @@ class ProcessTest(unittest.TestCase):
 
             ; [argv] -> [exit_code]
             main:
-                dup, siz, beq + .break; Break if empty
+            .argv = 0
+                ent + 1, stl + .argv
+                0
+                dup, ldl + .argv, siz, sub, beq + .break
             .loop:
-                dup, get; Next argument
-                lds + stdout, cls + print; Print argument to standard output
-                dup, siz, beq + .break; Break if empty
-                ' ', lds + stdout, put; Write space to standard output
+                dup, ldl + .argv, add, ldm
+                lds + stdout, cls + print
+                adi + 1
+                dup, ldl + .argv, siz, sub, beq + .break
+                ' ', lds + stdout, psh
                 bal + .loop
             .break:
                 dis
-                '\n', lds + stdout, put; Write newline to standard output
-                0, ret
+                '\n', lds + stdout, psh
+                0, ret + 1
 
             ; [string, stream] -> []
             print:
-            .stream = 0
-                ent + 1
-                stl + .stream
+            .stream = 0, .string = 1
+                ent + 2, stl + .stream, stl + .string
+                0
             .loop:
-                dup, siz, beq + .break; Break if empty
-                dup, get; Next character
-                ldl + .stream, put; Write character to stream
-                bal + .loop
+                dup, ldl + .string, siz, sub, beq + .break
+                dup, ldl + .string, add, ldm
+                ldl + .stream, psh
+                adi + 1, bal + .loop
             .break:
                 dis
-                ret + 1
+                ret + 2
 
         '''), argv=['hello', 'world'])
 
         process.run()
-        self.assertEqual(process.read_line(), 'hello world\n')
+        self.assertEqual(process.read(), 'hello world\n')
 
     def test_get_integer_line(self):
         process = Process(assemble('''
@@ -136,17 +140,17 @@ class ProcessTest(unittest.TestCase):
                 ent + 2, stl + .stream
                 0, stl + .result; Initialize result
                 1; Positive sign
-                ldl + .stream, get; First character
+                ldl + .stream, pop; First character
                 dup, adi - '-', bne + .loop; If sign character
                 dis; Discard sign character
                 neg; Negative sign
-                ldl + .stream, get; First character after sign
+                ldl + .stream, pop; First character after sign
             .loop:
                 dup, adi - '\n', beq + .break; Break on newline
                 adi - '0'; Character to digit
                 ldl + .result, mli + 10; Multiply result by base
                 add, stl + .result; Add digit to result
-                ldl + .stream, get; Next character
+                ldl + .stream, pop; Next character
                 bal + .loop
             .break:
                 dis; Discard newline
@@ -170,17 +174,17 @@ class ProcessTest(unittest.TestCase):
                 ent + 2, stl + .stream
                 0, stl + .result; Initialize result
                 1; Positive sign
-                ldl + .stream, get; First character
+                ldl + .stream, pop; First character
                 dup, adi - '-', bne + .loop; If sign character
                 dis; Discard sign character
                 neg; Negative sign
-                ldl + .stream, get; First character after sign
+                ldl + .stream, pop; First character after sign
             .loop:
                 dup, adi - '\n', beq + .break; Break on newline
                 adi - '0'; Character to digit
                 ldl + .result, mli + 10; Multiply result by base
                 add, stl + .result; Add digit to result
-                ldl + .stream, get; Next character
+                ldl + .stream, pop; Next character
                 bal + .loop
             .break:
                 dis; Discard newline
@@ -204,7 +208,7 @@ class ProcessTest(unittest.TestCase):
                 ent + 2, stl + .stream, stl + .value
                 1
                 ldl + .value, bge + .loop_1
-                '-', ldl + .stream, put
+                '-', ldl + .stream, psh
                 ldl + .value, neg, stl + .value
             .loop_1:
                 mli + 10
@@ -213,17 +217,17 @@ class ProcessTest(unittest.TestCase):
                 fdi + 10
                 dup, beq + .break
                 dup, ldl + .value, swp, div, fdi + 1
-                adi + '0', ldl + .stream, put
+                adi + '0', ldl + .stream, psh
                 dup, ldl + .value, swp, mod, stl + .value
                 bal + .loop_2
             .break:
-                '\n', ldl + .stream, put
+                '\n', ldl + .stream, psh
                 ret + 2
 
         '''))
 
         process.run()
-        self.assertEqual(process.read_line(), '285793423\n')
+        self.assertEqual(process.read(), '285793423\n')
 
     def test_put_integer_line_negative(self):
         process = Process(assemble('''
@@ -236,7 +240,7 @@ class ProcessTest(unittest.TestCase):
                 ent + 2, stl + .stream, stl + .value
                 1
                 ldl + .value, bge + .loop_1
-                '-', ldl + .stream, put
+                '-', ldl + .stream, psh
                 ldl + .value, neg, stl + .value
             .loop_1:
                 mli + 10
@@ -245,17 +249,17 @@ class ProcessTest(unittest.TestCase):
                 fdi + 10
                 dup, beq + .break
                 dup, ldl + .value, swp, div, fdi + 1
-                adi + '0', ldl + .stream, put
+                adi + '0', ldl + .stream, psh
                 dup, ldl + .value, swp, mod, stl + .value
                 bal + .loop_2
             .break:
-                '\n', ldl + .stream, put
+                '\n', ldl + .stream, psh
                 ret + 2
 
         '''))
 
         process.run()
-        self.assertEqual(process.read_line(), '-618584259\n')
+        self.assertEqual(process.read(), '-618584259\n')
 
 
 if __name__ == '__main__':

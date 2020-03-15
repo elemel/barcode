@@ -146,20 +146,6 @@ def floor_divide_integer(process, operand):
     process.push_data(Q(value // operand))
 
 
-@operation(Q(2, 7))
-def get(process, operand):
-    handle = process.pop_data()
-
-    try:
-        value = process.memory.get(handle)
-        process.push_data(value)
-    except:
-        # User can provide input and resume
-        process.push_data(handle)
-        process.registers[IR] -= 1
-        raise BlockedError()
-
-
 @operation(Q(7, 9), 'hcf')
 def halt(process, operand):
     process.registers[IR] -= 1
@@ -251,12 +237,26 @@ def load_integer(process, operand):
     process.push_data(Q(operand))
 
 
-@operation(Q(1, 3))
-def put(process, operand):
+@operation(Q(2, 7))
+def pop(process, operand):
+    handle = process.pop_data()
+
+    try:
+        value = process.memory.pop(handle)
+        process.push_data(value)
+    except:
+        # User can provide input and resume
+        process.push_data(handle)
+        process.registers[IR] -= 1
+        raise BlockedError()
+
+
+@operation(Q(1, 3), 'psh')
+def push(process, operand):
     handle = process.pop_data()
     value = process.pop_data()
 
-    process.memory.put(handle, value)
+    process.memory.push(handle, value)
 
 
 @operation(Q(8, 9), 'ret')

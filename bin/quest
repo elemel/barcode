@@ -15,16 +15,8 @@ def main():
     if not sys.stdin.isatty():
         process.write(sys.stdin.read())
 
-    process.close()
     process.run()
-
-    while True:
-        line = process.read_line()
-
-        if not line:
-            break
-
-        print(line, end='')
+    print(process.read(), end='')
 
 
 if __name__ == '__main__':

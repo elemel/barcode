@@ -45,17 +45,11 @@ class Memory:
         del self.queues[key]
         self.pool.append(key)
 
-    def put(self, key: Q, value: Q) -> None:
+    def push(self, key: Q, value: Q) -> None:
         self.queues[key].append(value)
 
-    def unput(self, key: Q) -> Q:
+    def pop(self, key: Q) -> Q:
         return self.queues[key].pop()
-
-    def get(self, key: Q) -> Q:
-        return self.queues[key].popleft()
-
-    def unget(self, key: Q, value: Q) -> None:
-        self.queues[key].appendleft(value)
 
     def size(self, key: Q) -> int:
         return len(self.queues[key])
