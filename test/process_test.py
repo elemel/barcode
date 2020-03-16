@@ -43,7 +43,7 @@ class ProcessTest(unittest.TestCase):
                 message
             loop:
                 dup, adi - message.end, beq + break
-                dup, ldm, lds + stdout, psh
+                dup, ldm, stdout, put
                 adi + 1, bal + loop
             break:
                 dis
@@ -71,7 +71,7 @@ class ProcessTest(unittest.TestCase):
             .loop:
                 dup, ldm; Load character
                 dup, beq + .break; Break on null character
-                ldl + .stream, psh; Write character to stream
+                ldl + .stream, put; Write character to stream
                 adi + 1, bal + .loop; Next character
             .break:
                 dis, dis
@@ -100,14 +100,14 @@ class ProcessTest(unittest.TestCase):
                 dup, ldl + .argv, siz, sub, beq + .break
             .loop:
                 dup, ldl + .argv, add, ldm
-                lds + stdout, cls + print
+                stdout, cls + print
                 adi + 1
                 dup, ldl + .argv, siz, sub, beq + .break
-                ' ', lds + stdout, psh
+                ' ', stdout, put
                 bal + .loop
             .break:
                 dis
-                '\n', lds + stdout, psh
+                '\n', stdout, put
                 0, ret + 1
 
             ; [string, stream] -> []
@@ -118,7 +118,7 @@ class ProcessTest(unittest.TestCase):
             .loop:
                 dup, ldl + .string, siz, sub, beq + .break
                 dup, ldl + .string, add, ldm
-                ldl + .stream, psh
+                ldl + .stream, put
                 adi + 1, bal + .loop
             .break:
                 dis
@@ -140,17 +140,17 @@ class ProcessTest(unittest.TestCase):
                 ent + 2, stl + .stream
                 0, stl + .result; Initialize result
                 1; Positive sign
-                ldl + .stream, pop; First character
+                ldl + .stream, get; First character
                 dup, adi - '-', bne + .loop; If sign character
                 dis; Discard sign character
                 neg; Negative sign
-                ldl + .stream, pop; First character after sign
+                ldl + .stream, get; First character after sign
             .loop:
                 dup, adi - '\n', beq + .break; Break on newline
                 adi - '0'; Character to digit
                 ldl + .result, mli + 10; Multiply result by base
                 add, stl + .result; Add digit to result
-                ldl + .stream, pop; Next character
+                ldl + .stream, get; Next character
                 bal + .loop
             .break:
                 dis; Discard newline
@@ -174,17 +174,17 @@ class ProcessTest(unittest.TestCase):
                 ent + 2, stl + .stream
                 0, stl + .result; Initialize result
                 1; Positive sign
-                ldl + .stream, pop; First character
+                ldl + .stream, get; First character
                 dup, adi - '-', bne + .loop; If sign character
                 dis; Discard sign character
                 neg; Negative sign
-                ldl + .stream, pop; First character after sign
+                ldl + .stream, get; First character after sign
             .loop:
                 dup, adi - '\n', beq + .break; Break on newline
                 adi - '0'; Character to digit
                 ldl + .result, mli + 10; Multiply result by base
                 add, stl + .result; Add digit to result
-                ldl + .stream, pop; Next character
+                ldl + .stream, get; Next character
                 bal + .loop
             .break:
                 dis; Discard newline
@@ -208,7 +208,7 @@ class ProcessTest(unittest.TestCase):
                 ent + 2, stl + .stream, stl + .value
                 1
                 ldl + .value, bge + .loop_1
-                '-', ldl + .stream, psh
+                '-', ldl + .stream, put
                 ldl + .value, neg, stl + .value
             .loop_1:
                 mli + 10
@@ -217,11 +217,11 @@ class ProcessTest(unittest.TestCase):
                 fdi + 10
                 dup, beq + .break
                 dup, ldl + .value, swp, div, fdi + 1
-                adi + '0', ldl + .stream, psh
+                adi + '0', ldl + .stream, put
                 dup, ldl + .value, swp, mod, stl + .value
                 bal + .loop_2
             .break:
-                '\n', ldl + .stream, psh
+                '\n', ldl + .stream, put
                 ret + 2
 
         '''))
@@ -240,7 +240,7 @@ class ProcessTest(unittest.TestCase):
                 ent + 2, stl + .stream, stl + .value
                 1
                 ldl + .value, bge + .loop_1
-                '-', ldl + .stream, psh
+                '-', ldl + .stream, put
                 ldl + .value, neg, stl + .value
             .loop_1:
                 mli + 10
@@ -249,11 +249,11 @@ class ProcessTest(unittest.TestCase):
                 fdi + 10
                 dup, beq + .break
                 dup, ldl + .value, swp, div, fdi + 1
-                adi + '0', ldl + .stream, psh
+                adi + '0', ldl + .stream, put
                 dup, ldl + .value, swp, mod, stl + .value
                 bal + .loop_2
             .break:
-                '\n', ldl + .stream, psh
+                '\n', ldl + .stream, put
                 ret + 2
 
         '''))

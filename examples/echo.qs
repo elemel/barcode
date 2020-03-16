@@ -3,28 +3,32 @@
 
 ; [argv] -> [exit_code]
 main:
-    dup, siz, beq + .break; Break if empty
+.argv = 0
+    ent + 1, stl + .argv
+    0
+    dup, ldl + .argv, siz, sub, beq + .break
 .loop:
-    dup, get; Next argument
-    lds + stdout, cls + print; Print argument to standard output
-    dup, siz, beq + .break; Break if empty
-    ' ', lds + stdout, put; Write space to standard output
+    dup, ldl + .argv, add, ldm
+    stdout, cls + print
+    adi + 1
+    dup, ldl + .argv, siz, sub, beq + .break
+    ' ', stdout, put
     bal + .loop
 .break:
     dis
-    '\n', lds + stdout, put; Write newline to standard output
-    0, ret
+    '\n', stdout, put
+    0, ret + 1
 
 ; [string, stream] -> []
 print:
-.stream = 0
-    ent + 1
-    stl + .stream
+.stream = 0, .string = 1
+    ent + 2, stl + .stream, stl + .string
+    0
 .loop:
-    dup, siz, beq + .break; Break if empty
-    dup, get; Next character
-    ldl + .stream, put; Write character to stream
-    bal + .loop
+    dup, ldl + .string, siz, sub, beq + .break
+    dup, ldl + .string, add, ldm
+    ldl + .stream, put
+    adi + 1, bal + .loop
 .break:
     dis
-    ret + 1
+    ret + 2

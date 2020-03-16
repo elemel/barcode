@@ -204,6 +204,7 @@ def assemble(assembly_code):
         dup = 1/5; duplicate
         ent = 1/2; enter
         fdi = 4/7; floor_divide_integer
+        get = 10/11; get
         hcf = 7/9; halt
         inv = 5/6; invert
         ldi = 0; load_integer
@@ -219,6 +220,7 @@ def assemble(assembly_code):
         num = 4/5; numerator
         pop = 2/7; pop
         psh = 1/3; push
+        put = 9/11; put
         ret = 8/9; return_
         siz = 3/4; size
         stl = 7/8; store_local
@@ -226,10 +228,11 @@ def assemble(assembly_code):
         str = 5/8; store_register
         sub = 1/6; subtract
         swp = 6/7; swap
+        tel = 1/12; tell
 
-        stdin: 2/3
-        stdout: 1/4
-        stderr: 3/4
+        stdin = 0
+        stdout = 1
+        stderr = 2
 
     """
 

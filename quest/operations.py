@@ -1,5 +1,6 @@
 from enum import Enum
 from fractions import Fraction as Q
+from math import floor
 
 from quest.register import Register
 
@@ -145,6 +146,14 @@ def floor_divide_integer(process, operand):
     process.push_data(Q(value // operand))
 
 
+@operation(Q(10, 11))
+def get(process, operand):
+    handle = floor(process.pop_data())
+    stream = process.streams[handle]
+    value = stream.popleft()
+    process.push_data(value)
+
+
 @operation(Q(7, 9), 'hcf')
 def halt(process, operand):
     process.registers[IR] -= 1
@@ -255,6 +264,14 @@ def push(process, operand):
     process.memory.push(handle, value)
 
 
+@operation(Q(9, 11))
+def put(process, operand):
+    handle = floor(process.pop_data())
+    stream = process.streams[handle]
+    value = process.pop_data()
+    stream.append(value)
+
+
 @operation(Q(8, 9), 'ret')
 def return_(process, operand):
     for _ in range(operand):
@@ -305,3 +322,11 @@ def swap(process, operand):
 
     process.push_data(a)
     process.push_data(b)
+
+
+@operation(Q(1, 12), 'tel')
+def tell(process, operand):
+    handle = floor(process.pop_data())
+    stream = process.streams[handle]
+    size = len(stream)
+    process.push_data(Q(size))

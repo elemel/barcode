@@ -28,9 +28,7 @@ class Process:
         self.registers[DR] = self.memory.new()
         self.registers[CR] = self.memory.new()
 
-        self.memory.new() # stdin = 2/3
-        self.memory.new() # stdout = 1/4
-        self.memory.new() # stderr = 3/4
+        self.streams = [deque() for _ in StandardStream]
 
         for instruction in machine_code:
             self.memory.push(Q(0), instruction)
@@ -75,27 +73,21 @@ class Process:
         except TerminatedError:
             return False
 
-    def read(self, handle: Q = STDOUT) -> str:
+    def read(self, handle: int = STDOUT) -> str:
         chars = []
+        stream = self.streams[handle]
 
-        for _ in range(self.memory.size(handle)):
-            char = chr(floor(self.memory.pop(handle)))
+        while stream:
+            char = chr(floor(stream.popleft()))
             chars.append(char)
 
-        chars.reverse()
         return ''.join(chars)
 
-    def write(self, s, handle: Q = STDIN) -> None:
-        values = []
-
-        for _ in range(self.memory.size(handle)):
-            values.append(self.memory.pop(handle))
+    def write(self, s, handle: int = STDIN) -> None:
+        stream = self.streams[handle]
 
         for c in s:
-            values.append(Q(ord(c)))
-
-        while values:
-            self.memory.push(handle, values.pop())
+            stream.append(Q(ord(c)))
 
     def print_stack(self, base):
         for offset in range(self.memory.size(base)):
