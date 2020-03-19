@@ -307,6 +307,13 @@ def store_register(process, operand):
     process.registers[operand] = value
 
 
+@operation(Q(5, 12), 'sts')
+def store_static(process, operand):
+    address = Q(operand)
+    value = process.pop_data()
+    process.memory[address] = value
+
+
 @operation(Q(1, 6), 'sub')
 def subtract(process, operand):
     right = process.pop_data()
