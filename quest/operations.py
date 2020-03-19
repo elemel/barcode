@@ -166,9 +166,10 @@ def invert(process, operand):
     process.push_data(1 / value)
 
 
-@operation(Q(8, 11), 'lds')
-def load_static(process, operand):
-    value = process.memory[Q(operand)]
+@operation(Q(1, 7), 'ldd')
+def load_dynamic(process, operand):
+    address = process.pop_data() + operand
+    value = process.memory[address]
     process.push_data(value)
 
 
@@ -179,16 +180,15 @@ def load_local(process, operand):
     process.push_data(value)
 
 
-@operation(Q(1, 7), 'ldm')
-def load_memory(process, operand):
-    address = process.pop_data() + operand
-    value = process.memory[address]
-    process.push_data(value)
-
-
 @operation(Q(7, 11), 'ldr')
 def load_register(process, operand):
     value = process.registers[operand]
+    process.push_data(value)
+
+
+@operation(Q(8, 11), 'lds')
+def load_static(process, operand):
+    value = process.memory[Q(operand)]
     process.push_data(value)
 
 

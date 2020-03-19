@@ -8,7 +8,7 @@ main:
     0
     dup, ldl + .argv, siz, sub, beq + .break
 .loop:
-    dup, ldl + .argv, add, ldm
+    dup, ldl + .argv, add, ldd
     stdout, cls + print
     adi + 1
     dup, ldl + .argv, siz, sub, beq + .break
@@ -26,7 +26,7 @@ print:
     0
 .loop:
     dup, ldl + .string, siz, sub, beq + .break
-    dup, ldl + .string, add, ldm
+    dup, ldl + .string, add, ldd
     ldl + .stream, put
     adi + 1, bal + .loop
 .break:

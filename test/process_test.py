@@ -10,6 +10,9 @@ STDIN = StandardStream.STDIN.value
 STDOUT = StandardStream.STDOUT.value
 STDERR = StandardStream.STDERR.value
 
+ECHO_SOURCE = open('examples/echo.qs').read()
+HELLO_WORLD_SOURCE = open('examples/hello_world.qs').read()
+
 
 class ProcessTest(unittest.TestCase):
     def test_halt(self):
@@ -37,24 +40,7 @@ class ProcessTest(unittest.TestCase):
         self.assertEqual(process.pop_data(), Q(13))
 
     def test_hello_world(self):
-        process = Process(assemble('''
-
-                dis
-                message
-            loop:
-                dup, adi - message.end, beq + break
-                dup, ldm, stdout, put
-                adi + 1, bal + loop
-            break:
-                dis
-                0, hcf
-
-            message:
-                "Hello, World!\n"
-            .end:
-
-        '''))
-
+        process = Process(assemble(HELLO_WORLD_SOURCE))
         process.run()
         self.assertEqual(process.read(), 'Hello, World!\n')
 
@@ -69,7 +55,7 @@ class ProcessTest(unittest.TestCase):
                 ent + 1
                 stl + .stream
             .loop:
-                dup, ldm; Load character
+                dup, ldd; Load character
                 dup, beq + .break; Break on null character
                 ldl + .stream, put; Write character to stream
                 adi + 1, bal + .loop; Next character
@@ -87,45 +73,7 @@ class ProcessTest(unittest.TestCase):
         self.assertEqual(process.read(), 'Hello, World!\n')
 
     def test_echo(self):
-        process = Process(assemble('''
-
-                cls + main; Run main
-                hcf; Halt program
-
-            ; [argv] -> [exit_code]
-            main:
-            .argv = 0
-                ent + 1, stl + .argv
-                0
-                dup, ldl + .argv, siz, sub, beq + .break
-            .loop:
-                dup, ldl + .argv, add, ldm
-                stdout, cls + print
-                adi + 1
-                dup, ldl + .argv, siz, sub, beq + .break
-                ' ', stdout, put
-                bal + .loop
-            .break:
-                dis
-                '\n', stdout, put
-                0, ret + 1
-
-            ; [string, stream] -> []
-            print:
-            .stream = 0, .string = 1
-                ent + 2, stl + .stream, stl + .string
-                0
-            .loop:
-                dup, ldl + .string, siz, sub, beq + .break
-                dup, ldl + .string, add, ldm
-                ldl + .stream, put
-                adi + 1, bal + .loop
-            .break:
-                dis
-                ret + 2
-
-        '''), argv=['hello', 'world'])
-
+        process = Process(assemble(ECHO_SOURCE), argv=['hello', 'world'])
         process.run()
         self.assertEqual(process.read(), 'hello world\n')
 

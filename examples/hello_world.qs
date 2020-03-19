@@ -2,7 +2,7 @@
     message
 loop:
     dup, adi - message.end, beq + break
-    dup, ldm, stdout, put
+    dup, ldd, stdout, put
     adi + 1, bal + loop
 break:
     dis
