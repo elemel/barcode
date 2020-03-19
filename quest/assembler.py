@@ -223,8 +223,8 @@ def assemble(assembly_code):
         put = 9/11; put
         ret = 8/9; return_
         siz = 3/4; size
+        std = 3/5; store_dynamic
         stl = 7/8; store_local
-        stm = 3/5; store_memory
         str = 5/8; store_register
         sub = 1/6; subtract
         swp = 6/7; swap

@@ -287,16 +287,16 @@ def size(process, operand):
     process.push_data(Q(size))
 
 
-@operation(Q(7, 8), 'stl')
-def store_local(process, operand):
-    address = process.registers[CR] - 1 - operand
+@operation(Q(3, 5), 'std')
+def store_dynamic(process, operand):
+    address = process.pop_data() + operand
     value = process.pop_data()
     process.memory[address] = value
 
 
-@operation(Q(3, 5), 'stm')
-def store_memory(process, operand):
-    address = process.pop_data() + operand
+@operation(Q(7, 8), 'stl')
+def store_local(process, operand):
+    address = process.registers[CR] - 1 - operand
     value = process.pop_data()
     process.memory[address] = value
 
