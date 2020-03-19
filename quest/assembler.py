@@ -195,7 +195,7 @@ def assemble(assembly_code):
         ble = 1/10; branch_less_equal
         blt = 3/11; branch_less_than
         bne = 3/10; branch_not_equal
-        cal = 5/11; call
+        cld = 5/11; call_dynamic
         cls = 4/11; call_static
         del = 4/9; delete
         den = 6/11; denominator
@@ -226,6 +226,7 @@ def assemble(assembly_code):
         std = 3/5; store_dynamic
         stl = 7/8; store_local
         str = 5/8; store_register
+        sts = 5/12; store_static
         sub = 1/6; subtract
         swp = 6/7; swap
         tel = 1/12; tell

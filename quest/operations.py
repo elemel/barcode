@@ -93,8 +93,8 @@ def branch_not_equal(process, operand):
         process.registers[IR] = Q(operand)
 
 
-@operation(Q(5, 11), 'cal')
-def call(process, operand):
+@operation(Q(5, 11), 'cld')
+def call_dynamic(process, operand):
     function = process.pop_data()
     process.push_call(process.registers[IR])
     process.registers[IR] = function
