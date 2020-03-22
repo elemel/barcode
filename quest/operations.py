@@ -3,13 +3,14 @@ from fractions import Fraction as Q
 from math import floor
 
 from quest.register import Register
+from quest.utils import base_to_index
 
 IR = Register.IR.value
 DR = Register.DR.value
 CR = Register.CR.value
 
 MNEMONIC_TO_OPCODE = {}
-OPCODE_TO_OPERATION = {}
+OPERATIONS = 256 * [None]
 
 
 class BlockedError(Exception):
@@ -28,11 +29,13 @@ def operation(opcode, mnemonic=None):
         if mnemonic in MNEMONIC_TO_OPCODE:
             raise ValueError(f'Duplicate mnemonic: {mnemonic}')
 
-        if opcode in OPCODE_TO_OPERATION:
+        index = base_to_index(opcode)
+
+        if OPERATIONS[index]:
             raise ValueError(f'Duplicate opcode: {opcode}')
 
         MNEMONIC_TO_OPCODE[mnemonic] = opcode
-        OPCODE_TO_OPERATION[opcode] = func
+        OPERATIONS[index] = func
         return func
 
     return decorate

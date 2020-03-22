@@ -3,12 +3,10 @@ from fractions import Fraction as Q
 from math import floor
 
 from quest.memory import Memory
-
-from quest.operations import (
-    BlockedError, TerminatedError, MNEMONIC_TO_OPCODE, OPCODE_TO_OPERATION)
-
+from quest.operations import BlockedError, TerminatedError, OPERATIONS
 from quest.register import Register
 from quest.stdio import StandardStream
+from quest.utils import base_to_index
 
 IR = Register.IR.value
 DR = Register.DR.value
@@ -61,8 +59,9 @@ class Process:
         instruction = self.memory[self.registers[IR]]
         self.registers[IR] += 1
         operand, opcode = divmod(instruction, 1)
-        operation = OPCODE_TO_OPERATION[opcode]
-        operation(self, operand)
+        index = base_to_index(opcode)
+        func = OPERATIONS[index]
+        func(self, operand)
 
     def run(self) -> bool:
         try:
