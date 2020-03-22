@@ -3,7 +3,7 @@ from fractions import Fraction as Q
 from math import floor
 
 from quest.register import Register
-from quest.utils import base_to_index
+from quest.utils import fraction_to_index
 
 IR = Register.IR.value
 DR = Register.DR.value
@@ -29,7 +29,7 @@ def operation(opcode, mnemonic=None):
         if mnemonic in MNEMONIC_TO_OPCODE:
             raise ValueError(f'Duplicate mnemonic: {mnemonic}')
 
-        index = base_to_index(opcode)
+        index = fraction_to_index(opcode)
 
         if OPERATIONS[index]:
             raise ValueError(f'Duplicate opcode: {opcode}')
