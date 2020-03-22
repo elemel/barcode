@@ -1,5 +1,7 @@
 from fractions import Fraction as Q
 
+from quest.utils import base_to_index
+
 
 def next_rational(q: Q) -> Q:
     dq = Q(1, q.denominator)
@@ -22,11 +24,15 @@ class Memory:
 
     def __getitem__(self, address: Q) -> Q:
         offset, base = divmod(address, 1)
-        return self.stacks[base.denominator][base.numerator][offset]
+        index = base_to_index(base)
+        stack = self.stacks[index]
+        return stack[offset % len(stack)]
 
     def __setitem__(self, address: Q, value: Q) -> None:
         offset, base = divmod(address, 1)
-        self.stacks[base.denominator][base.numerator][offset] = value
+        index = base_to_index(base)
+        stack = self.stacks[index]
+        stack[offset % len(stack)] = value
 
     def new(self, size: int = 0) -> Q:
         if self.pool:
@@ -35,25 +41,30 @@ class Memory:
             base = self.next_base
             self.next_base = next_rational(self.next_base)
 
-            while len(self.stacks) <= base.denominator:
-                self.stacks.append([])
+        index = base_to_index(base)
 
-            while len(self.stacks[base.denominator]) <= base.numerator:
-                self.stacks[base.denominator].append(None)
+        while len(self.stacks) <= index:
+            self.stacks.append(None)
 
-        self.stacks[base.denominator][base.numerator] = size * [Q(0)]
+        self.stacks[index] = size * [Q(0)]
         return base
 
     def delete(self, base: Q) -> None:
-        if self.stacks[base.denominator][base.numerator] is not None:
-            self.stacks[base.denominator][base.numerator] = None
+        base %= 1
+        index = base_to_index(base)
+
+        if self.stacks[index] is not None:
+            self.stacks[index] = None
             self.pool.append(base)
 
     def push(self, base: Q, value: Q) -> None:
-        self.stacks[base.denominator][base.numerator].append(value)
+        index = base_to_index(base % 1)
+        self.stacks[index].append(value)
 
     def pop(self, base: Q) -> Q:
-        return self.stacks[base.denominator][base.numerator].pop()
+        index = base_to_index(base % 1)
+        return self.stacks[index].pop()
 
     def size(self, base: Q) -> int:
-        return len(self.stacks[base.denominator][base.numerator])
+        index = base_to_index(base % 1)
+        return len(self.stacks[index])
