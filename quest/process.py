@@ -3,7 +3,7 @@ from fractions import Fraction as Q
 from math import floor
 
 from quest.memory import Memory
-from quest.operations import BlockedError, TerminatedError, OPERATIONS
+from quest.operations import MNEMONIC_TO_OPCODE, OPERATIONS
 from quest.register import Register
 from quest.stdio import StandardStream
 from quest.utils import fraction_to_index
@@ -15,6 +15,9 @@ CR = Register.CR.value
 STDIN = StandardStream.STDIN.value
 STDOUT = StandardStream.STDOUT.value
 STDERR = StandardStream.STDERR.value
+
+GET_INDEX = fraction_to_index(MNEMONIC_TO_OPCODE['get'])
+HALT_INDEX = fraction_to_index(MNEMONIC_TO_OPCODE['hcf'])
 
 
 class Process:
@@ -29,7 +32,7 @@ class Process:
         self.streams = [deque() for _ in StandardStream]
 
         for instruction in machine_code:
-            self.memory.push(Q(0), instruction)
+            self.push_instruction(instruction)
 
         argv_base = self.memory.new()
 
@@ -42,6 +45,9 @@ class Process:
             self.memory.push(argv_base, arg_base)
 
         self.push_data(argv_base)
+
+    def push_instruction(self, value: Q) -> None:
+        self.memory.push(self.registers[IR], value)
 
     def push_data(self, value: Q) -> None:
         self.memory.push(self.registers[DR], value)
@@ -58,19 +64,28 @@ class Process:
     def step(self) -> None:
         instruction = self.memory[self.registers[IR]]
         self.registers[IR] += 1
+
         operand, opcode = divmod(instruction, 1)
         index = fraction_to_index(opcode)
+
+        if index == GET_INDEX:
+            address = self.registers[DR] - 1
+            handle = floor(self.memory[address])
+
+            if not self.streams[handle]:
+                self.registers[IR] -= 1
+                return False
+        elif index == HALT_INDEX:
+            self.registers[IR] -= 1
+            return False
+
         func = OPERATIONS[index]
         func(self, operand)
+        return True
 
     def run(self) -> bool:
-        try:
-            while True:
-                self.step()
-        except BlockedError:
-            return True
-        except TerminatedError:
-            return False
+        while self.step():
+            pass
 
     def read(self, handle: int = STDOUT) -> str:
         chars = []
@@ -92,3 +107,17 @@ class Process:
         for offset in range(self.memory.size(base)):
             address = base + offset
             print(f'{address}: {self.memory[address]}')
+
+    def is_halted(self) -> bool:
+        instruction = self.memory[self.registers[IR]]
+        return instruction % 1 == HALT_INDEX
+
+    def is_blocked(self) -> bool:
+        instruction = self.memory[self.registers[IR]]
+
+        if instruction % 1 != GET_INDEX:
+            return False
+
+        address = self.registers[DR] - 1
+        handle = floor(self.memory[address])
+        return not self.streams[handle]

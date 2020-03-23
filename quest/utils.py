@@ -5,7 +5,7 @@ def fraction_to_index(q: Q) -> int:
     num = q.numerator
     den = q.denominator
     assert 0 <= num < den
-    return  (den - 1) * (den - 2) // 2 + num
+    return (den - 1) * (den - 2) // 2 + num
 
 
 def next_fraction(q: Q) -> Q:

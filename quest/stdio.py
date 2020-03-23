@@ -1,8 +1,7 @@
 from enum import Enum
-from fractions import Fraction as Q
 
 
 class StandardStream(Enum):
-    STDIN = 0
-    STDOUT = 1
-    STDERR = 2
+    STDIN = 0 # Standard input
+    STDOUT = 1 # Standard output
+    STDERR = 2 # Standard error

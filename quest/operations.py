@@ -13,14 +13,6 @@ MNEMONIC_TO_OPCODE = {}
 OPERATIONS = 256 * [None]
 
 
-class BlockedError(Exception):
-    pass
-
-
-class TerminatedError(Exception):
-    pass
-
-
 def operation(opcode, mnemonic=None):
     def decorate(func):
         nonlocal mnemonic
@@ -159,8 +151,7 @@ def get(process, operand):
 
 @operation(Q(7, 9), 'hcf')
 def halt(process, operand):
-    process.registers[IR] -= 1
-    raise TerminatedError()
+    raise RuntimeError('Halt')
 
 
 @operation(Q(5, 6), 'inv')
@@ -248,22 +239,14 @@ def load_integer(process, operand):
 @operation(Q(2, 7))
 def pop(process, operand):
     handle = process.pop_data()
-
-    try:
-        value = process.memory.pop(handle)
-        process.push_data(value)
-    except:
-        # User can provide input and resume
-        process.push_data(handle)
-        process.registers[IR] -= 1
-        raise BlockedError()
+    value = process.memory.pop(handle)
+    process.push_data(value)
 
 
 @operation(Q(1, 3), 'psh')
 def push(process, operand):
     handle = process.pop_data()
     value = process.pop_data()
-
     process.memory.push(handle, value)
 
 
