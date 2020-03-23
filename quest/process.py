@@ -3,7 +3,8 @@ from fractions import Fraction as Q
 from math import floor
 
 from quest.memory import Memory
-from quest.operations import MNEMONIC_TO_OPCODE, OPERATIONS
+from quest.opcode import Opcode
+from quest.operations import OPERATIONS
 from quest.register import Register
 from quest.stdio import StandardStream
 from quest.utils import fraction_to_index
@@ -16,8 +17,8 @@ STDIN = StandardStream.STDIN.value
 STDOUT = StandardStream.STDOUT.value
 STDERR = StandardStream.STDERR.value
 
-GET_INDEX = fraction_to_index(MNEMONIC_TO_OPCODE['get'])
-HALT_INDEX = fraction_to_index(MNEMONIC_TO_OPCODE['hcf'])
+GET_INDEX = fraction_to_index(Opcode.GET.value)
+HCF_INDEX = fraction_to_index(Opcode.HCF.value)
 
 
 class Process:
@@ -75,7 +76,7 @@ class Process:
             if not self.streams[handle]:
                 self.registers[IR] -= 1
                 return False
-        elif index == HALT_INDEX:
+        elif index == HCF_INDEX:
             self.registers[IR] -= 1
             return False
 

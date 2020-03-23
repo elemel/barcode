@@ -1,6 +1,6 @@
 all: build/opcode.qs build/register.qs build/stdio.qs
 
-build/opcode.qs: build bin/gen_opcode quest/operations.py
+build/opcode.qs: build bin/gen_opcode quest/opcode.py
 	PYTHONPATH=. bin/gen_opcode > build/opcode.qs
 
 build/register.qs: build bin/gen_register quest/register.py

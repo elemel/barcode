@@ -2,6 +2,7 @@ from enum import Enum
 from fractions import Fraction as Q
 from math import floor
 
+from quest.opcode import Opcode
 from quest.register import Register
 from quest.utils import fraction_to_index
 
@@ -9,31 +10,19 @@ IR = Register.IR.value
 DR = Register.DR.value
 CR = Register.CR.value
 
-MNEMONIC_TO_OPCODE = {}
 OPERATIONS = 256 * [None]
 
 
-def operation(opcode, mnemonic=None):
+def operation(opcode: Opcode):
     def decorate(func):
-        nonlocal mnemonic
-        mnemonic = mnemonic or func.__name__
-
-        if mnemonic in MNEMONIC_TO_OPCODE:
-            raise ValueError(f'Duplicate mnemonic: {mnemonic}')
-
-        index = fraction_to_index(opcode)
-
-        if OPERATIONS[index]:
-            raise ValueError(f'Duplicate opcode: {opcode}')
-
-        MNEMONIC_TO_OPCODE[mnemonic] = opcode
+        index = fraction_to_index(opcode.value)
         OPERATIONS[index] = func
         return func
 
     return decorate
 
 
-@operation(Q(5, 7))
+@operation(Opcode.ADD)
 def add(process, operand):
     right = process.pop_data()
     left = process.pop_data()
@@ -41,80 +30,80 @@ def add(process, operand):
     process.push_data(left + right)
 
 
-@operation(Q(3, 7), 'adi')
+@operation(Opcode.ADI)
 def add_integer(process, operand):
     value = process.pop_data()
     process.push_data(value + operand)
 
 
-@operation(Q(7, 10), 'bal')
+@operation(Opcode.BAL)
 def branch_always(process, operand):
     process.registers[IR] = Q(operand)
 
 
-@operation(Q(9, 10), 'beq')
+@operation(Opcode.BEQ)
 def branch_equal(process, operand):
     if not process.pop_data():
         process.registers[IR] = Q(operand)
 
 
-@operation(Q(2, 5), 'bge')
+@operation(Opcode.BGE)
 def branch_greater_equal(process, operand):
     if process.pop_data() >= 0:
         process.registers[IR] = Q(operand)
 
 
-@operation(Q(5, 9), 'bgt')
+@operation(Opcode.BGT)
 def branch_greater_than(process, operand):
     if process.pop_data() > 0:
         process.registers[IR] = Q(operand)
 
 
-@operation(Q(1, 10), 'ble')
+@operation(Opcode.BLE)
 def branch_less_equal(process, operand):
     if process.pop_data() <= 0:
         process.registers[IR] = Q(operand)
 
 
-@operation(Q(3, 11), 'blt')
+@operation(Opcode.BLT)
 def branch_less_than(process, operand):
     if process.pop_data() < 0:
         process.registers[IR] = Q(operand)
 
 
-@operation(Q(3, 10), 'bne')
+@operation(Opcode.BNE)
 def branch_not_equal(process, operand):
     if process.pop_data():
         process.registers[IR] = Q(operand)
 
 
-@operation(Q(5, 11), 'cld')
+@operation(Opcode.CLD)
 def call_dynamic(process, operand):
     function = process.pop_data()
     process.push_call(process.registers[IR])
     process.registers[IR] = function
 
 
-@operation(Q(4, 11), 'cls')
+@operation(Opcode.CLS)
 def call_static(process, operand):
     process.push_call(process.registers[IR])
     process.registers[IR] = Q(operand)
 
 
-@operation(Q(4, 9), 'del')
+@operation(Opcode.DEL)
 def delete(process, operand):
     array = process.pop_data()
     process.memory.delete(array)
 
 
-@operation(Q(6, 11), 'den')
+@operation(Opcode.DEN)
 def denominator(process, operand):
     value = process.pop_data()
     value = Q(value.denominator)
     process.push_data(value)
 
 
-@operation(Q(1, 9), 'div')
+@operation(Opcode.DIV)
 def divide(process, operand):
     right = process.pop_data()
     left = process.pop_data()
@@ -122,26 +111,26 @@ def divide(process, operand):
     process.push_data(left / right)
 
 
-@operation(Q(1, 5), 'dup')
+@operation(Opcode.DUP)
 def duplicate(process, operand):
     address = process.registers[DR] - 1 - operand
     value = process.memory[address]
     process.push_data(value)
 
 
-@operation(Q(1, 2), 'ent')
+@operation(Opcode.ENT)
 def enter(process, operand):
     for _ in range(operand):
         process.push_call(Q(0))
 
 
-@operation(Q(4, 7), 'fdi')
+@operation(Opcode.FDI)
 def floor_divide_integer(process, operand):
     value = process.pop_data()
     process.push_data(Q(value // operand))
 
 
-@operation(Q(10, 11))
+@operation(Opcode.GET)
 def get(process, operand):
     handle = floor(process.pop_data())
     stream = process.streams[handle]
@@ -149,44 +138,44 @@ def get(process, operand):
     process.push_data(value)
 
 
-@operation(Q(7, 9), 'hcf')
+@operation(Opcode.HCF)
 def halt(process, operand):
     raise RuntimeError('Halt')
 
 
-@operation(Q(5, 6), 'inv')
+@operation(Opcode.INV)
 def invert(process, operand):
     value = process.pop_data()
     process.push_data(1 / value)
 
 
-@operation(Q(1, 7), 'ldd')
+@operation(Opcode.LDD)
 def load_dynamic(process, operand):
     address = process.pop_data() + operand
     value = process.memory[address]
     process.push_data(value)
 
 
-@operation(Q(1, 11), 'ldl')
+@operation(Opcode.LDL)
 def load_local(process, operand):
     address = process.registers[CR] - 1 - operand
     value = process.memory[address]
     process.push_data(value)
 
 
-@operation(Q(7, 11), 'ldr')
+@operation(Opcode.LDR)
 def load_register(process, operand):
     value = process.registers[operand]
     process.push_data(value)
 
 
-@operation(Q(8, 11), 'lds')
+@operation(Opcode.LDS)
 def load_static(process, operand):
     value = process.memory[Q(operand)]
     process.push_data(value)
 
 
-@operation(Q(2, 9), 'mod')
+@operation(Opcode.MOD)
 def modulo(process, operand):
     right = process.pop_data()
     left = process.pop_data()
@@ -194,7 +183,7 @@ def modulo(process, operand):
     process.push_data(left % right)
 
 
-@operation(Q(1, 8), 'mul')
+@operation(Opcode.MUL)
 def multiply(process, operand):
     right = process.pop_data()
     left = process.pop_data()
@@ -202,55 +191,55 @@ def multiply(process, operand):
     process.push_data(left * right)
 
 
-@operation(Q(1, 4), 'mli')
+@operation(Opcode.MLI)
 def multiply_integer(process, operand):
     value = process.pop_data()
     process.push_data(value * operand)
 
 
-@operation(Q(3, 8), 'neg')
+@operation(Opcode.NEG)
 def negate(process, operand):
     process.push_data(-process.pop_data())
 
 
-@operation(Q(2, 3))
+@operation(Opcode.NEW)
 def new(process, operand):
     array = process.memory.new(operand)
     process.push_data(array)
 
 
-@operation(Q(4, 5), 'num')
+@operation(Opcode.NUM)
 def numerator(process, operand):
     value = process.pop_data()
     value = Q(value.numerator)
     process.push_data(value)
 
 
-@operation(Q(2, 11), 'dis')
+@operation(Opcode.DIS)
 def discard(process, operand):
     process.pop_data()
 
 
-@operation(Q(0), 'ldi')
+@operation(Opcode.LDI)
 def load_integer(process, operand):
     process.push_data(Q(operand))
 
 
-@operation(Q(2, 7))
+@operation(Opcode.POP)
 def pop(process, operand):
     handle = process.pop_data()
     value = process.memory.pop(handle)
     process.push_data(value)
 
 
-@operation(Q(1, 3), 'psh')
+@operation(Opcode.PSH)
 def push(process, operand):
     handle = process.pop_data()
     value = process.pop_data()
     process.memory.push(handle, value)
 
 
-@operation(Q(9, 11))
+@operation(Opcode.PUT)
 def put(process, operand):
     handle = floor(process.pop_data())
     stream = process.streams[handle]
@@ -258,7 +247,7 @@ def put(process, operand):
     stream.append(value)
 
 
-@operation(Q(8, 9), 'ret')
+@operation(Opcode.RET)
 def return_(process, operand):
     for _ in range(operand):
         process.pop_call()
@@ -266,41 +255,41 @@ def return_(process, operand):
     process.registers[IR] = process.pop_call()
 
 
-@operation(Q(3, 4), 'siz')
+@operation(Opcode.SIZ)
 def size(process, operand):
     handle = process.pop_data()
     size = process.memory.size(handle)
     process.push_data(Q(size))
 
 
-@operation(Q(3, 5), 'std')
+@operation(Opcode.STD)
 def store_dynamic(process, operand):
     address = process.pop_data() + operand
     value = process.pop_data()
     process.memory[address] = value
 
 
-@operation(Q(7, 8), 'stl')
+@operation(Opcode.STL)
 def store_local(process, operand):
     address = process.registers[CR] - 1 - operand
     value = process.pop_data()
     process.memory[address] = value
 
 
-@operation(Q(5, 8), 'str')
+@operation(Opcode.STR)
 def store_register(process, operand):
     value = process.pop_data()
     process.registers[operand] = value
 
 
-@operation(Q(5, 12), 'sts')
+@operation(Opcode.STS)
 def store_static(process, operand):
     address = Q(operand)
     value = process.pop_data()
     process.memory[address] = value
 
 
-@operation(Q(1, 6), 'sub')
+@operation(Opcode.SUB)
 def subtract(process, operand):
     right = process.pop_data()
     left = process.pop_data()
@@ -308,7 +297,7 @@ def subtract(process, operand):
     process.push_data(left - right)
 
 
-@operation(Q(6, 7), 'swp')
+@operation(Opcode.SWP)
 def swap(process, operand):
     a = process.pop_data()
     b = process.pop_data()
@@ -317,7 +306,7 @@ def swap(process, operand):
     process.push_data(b)
 
 
-@operation(Q(1, 12), 'tel')
+@operation(Opcode.TEL)
 def tell(process, operand):
     handle = floor(process.pop_data())
     stream = process.streams[handle]
