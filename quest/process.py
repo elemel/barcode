@@ -20,6 +20,12 @@ STDERR = StandardStream.STDERR.value
 GET_INDEX = fraction_to_index(Opcode.GET.value)
 HCF_INDEX = fraction_to_index(Opcode.HCF.value)
 
+INDEX_TO_OPERATION = 256 * [None]
+
+for opcode, operation in OPERATIONS.items():
+    index = fraction_to_index(opcode.value)
+    INDEX_TO_OPERATION[index] = operation
+
 
 class Process:
     def __init__(self, machine_code: list = [], argv: list = []) -> None:
@@ -80,8 +86,8 @@ class Process:
             self.registers[IR] -= 1
             return False
 
-        func = OPERATIONS[index]
-        func(self, operand)
+        operation = INDEX_TO_OPERATION[index]
+        operation(self, operand)
         return True
 
     def run(self) -> bool:
